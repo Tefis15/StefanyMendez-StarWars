@@ -3,6 +3,9 @@ import enum
 
 db = SQLAlchemy()
 
+
+#Agregar def __repr__(self): en los favoritos y en vehiclesPeople y starshipsPeople
+
 class role(enum.Enum):
     admin = "admin"
     user = "user"
@@ -89,27 +92,31 @@ class StarshipsDetails(db.Model):
     starships = db.relationship(Starships)
 
     def __repr__(self):
-        return f'<Starships Details {self.starships.serialize().name}'
+        return f'<Starships Details {self.starships.name}'
     
     def serialize(self):
         return {
-            "id": self.id,
-            "uid": self.starships.serialize(), 
-            "descripcion": self.descripcion,
-            "model": self.model,
-            "starship_class": self.starship_class,
-            "manufacturer": self.manufacturer,
-            "cost_in_credits": self.cost_in_credits,
-            "length": self.length,
-            "crew": self.crew,
-            "passengers": self.passengers,
-            "max_atmosphering_speed": self.max_atmosphering_speed,
-            "hyperdrive_rating": self.hyperdrive_rating,
-            "MGLT": self.mglt,
-            "cargo_capacity": self.cargo_capacity,
-            "consumables": self.consumables,
-            "created": self.created,
-            "edited": self.edited
+                "properties":{
+                        "model": self.model,
+                        "starship_class": self.starship_class,
+                        "manufacturer": self.manufacturer,
+                        "cost_in_credits": self.cost_in_credits,
+                        "length": self.length,
+                        "crew": self.crew,
+                        "passengers": self.passengers,
+                        "max_atmosphering_speed": self.max_atmosphering_speed,
+                        "hyperdrive_rating": self.hyperdrive_rating,
+                        "MGLT": self.mglt,
+                        "cargo_capacity": self.cargo_capacity,
+                        "consumables": self.consumables,
+                        "created": self.created,
+                        "edited": self.edited,
+                        "name": self.starships.name,
+                        "url": self.starships.url
+            },
+            "uid": self.starships.uid,  
+            "id": self.id, 
+            "description": self.description  
         }
         
     def save(self):
@@ -194,26 +201,30 @@ class VehiclesDetails(db.Model):
     vehicles = db.relationship(Vehicles)
 
     def __repr__(self):
-        return f'<Vehicles Details {self.vehicles.serialize().name}'
+        return f'<Vehicles Details {self.vehicles.name}'
     
     def serialize(self):
         return {
-            "id": self.id,
-            "uid": self.vehicles.serialize(), 
-            "descripcion": self.descripcion,
-            "model": self.model,
-            "vehicle_class": self.vehicle_class,
-            "manufacturer": self.manufacturer,
-            "cost_in_credits": self.cost_in_credits,
-            "length": self.length,
-            "crew": self.crew,
-            "passengers": self.passengers,
-            "max_atmosphering_speed": self.max_atmosphering_speed,
-            "cargo_capacity": self.cargo_capacity,
-            "consumables": self.consumables,
-            "created": self.created,
-            "edited": self.edited
-        }
+                "properties":{
+                        "model": self.model,
+                        "vehicle_class": self.vehicle_class,
+                        "manufacturer": self.manufacturer,
+                        "cost_in_credits": self.cost_in_credits,
+                        "length": self.length,
+                        "crew": self.crew,
+                        "passengers": self.passengers,
+                        "max_atmosphering_speed": self.max_atmosphering_speed,
+                        "cargo_capacity": self.cargo_capacity,
+                        "consumables": self.consumables,
+                        "created": self.created,
+                        "edited": self.edited,
+                        "name": self.vehicles.name,
+                         "url": self.vehicles.url
+            },
+            "uid": self.vehicles.uid,  
+            "id": self.id, 
+            "description": self.description
+        }      
         
     def save(self):
         db.session.add(self)
@@ -292,27 +303,31 @@ class PlanetsDetails(db.Model):
     surface_water = db.Column(db.Float) 
     created = db.Column(db.DateTime(timezone=True), nullable=False)
     edited = db.Column(db.DateTime(timezone=True), nullable=False)
-    planet = db.relationship(Planets)
+    planets = db.relationship(Planets)
 
 
     def __repr__(self):
-        return f'<People Details {self.people.serialize().name}'
+        return f'<Planets Details {self.planets.name}'
     
     def serialize(self):
         return {
-            "id": self.id,
-            "uid": self.planet.serialize(), 
-            "descripcion": self.descripcion,
-            "diameter": self.diameter,
-            "rotation_period": self.rotation_period,
-            "orbital_period": self.orbital_period,
-            "gravity": self.gravity,
-            "population": self.population,
-            "climate": self.climate,
-            "terrain": self.terrain,
-            "surface_water": self.surface_water,
-            "created": self.created,
-            "edited": self.edited
+                "properties":{
+                        "diameter": self.diameter,
+                        "rotation_period": self.rotation_period,
+                        "orbital_period": self.orbital_period,
+                        "gravity": self.gravity,
+                        "population": self.population,
+                        "climate": self.climate,
+                        "terrain": self.terrain,
+                        "surface_water": self.surface_water,
+                        "created": self.created,
+                        "edited": self.edited,
+                        "name": self.planets.name,
+                         "url": self.planets.url
+            },
+            "uid": self.planets.uid,  
+            "id": self.id, 
+            "description": self.description         
         }
         
     def save(self):
@@ -382,7 +397,7 @@ class PeopleDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey(People.uid), unique=True, nullable=False)
     description = db.Column(db.String(500)) 
-    diameter = db.Column(db.Float)
+    height = db.Column(db.Float)
     mass = db.Column(db.Float)   
     skin_color = db.Column(db.String(50))
     eye_color = db.Column(db.String(50))
@@ -395,23 +410,27 @@ class PeopleDetails(db.Model):
     homeworld = db.relationship(Planets)
     
     def __repr__(self):
-        return f'<People Details {self.people.serialize().name}'
+        return f'<People Details {self.people.name}'
     
     def serialize(self):
         return {
-            "id": self.id,
-            "uid": self.uid.serialize(), 
-            "descripcion": self.descripcion,
-            "diameter": self.diameter,
-            "mass": self.mass,
-            "skin_color": self.skin_color,
-            "eye_color": self.eye_color,
-            "birth_year": self.birth_year,
-            "gender": self.gender,
-            "created": self.created,
-            "edited": self.edited,
-            "homeworld": self.homeworld.serialize()
-        }
+                "properties":{
+                        "height": self.height,
+                        "mass": self.mass,
+                        "skin_color": self.skin_color,
+                        "eye_color": self.eye_color,
+                        "birth_year": self.birth_year,
+                        "gender": self.gender,
+                        "created": self.created,
+                        "edited": self.edited,
+                        "homeworld": self.homeworld.serialize(),
+                        "name": self.people.name,
+                         "url": self.people.url
+            },
+            "uid": self.people.uid,  
+            "id": self.id, 
+            "description": self.description
+        } 
         
     def save(self):
         db.session.add(self)
