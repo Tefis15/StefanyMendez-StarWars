@@ -497,6 +497,8 @@ def edit_people(people_uid):
     
     return jsonify(response_body, 200)
     
+    
+#Eliminar de people favorites    
 @app.route("/people/<int:people_uid>", methods=['DELETE'])
 @jwt_required()
 def delete_people(people_uid):
@@ -716,6 +718,54 @@ def get_people_favorites(user_id):
     response_body = {
         "msg":"ok",
         "Results":favorites
+    }
+    
+    return jsonify(response_body, 200)
+
+@app.route("/people/favorites", methods=['POST'])
+@jwt_required()
+def add_people_favorites():
+    request_body = request.get_json(force=True, silent=True)  
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "user_id" not in request_body or request_body['user_id'] == "":
+        raise APIException("The user id is required", status_code=404)
+    
+    if "people_uid" not in request_body or request_body["people_uid"] == "":
+        raise APIException("The uid of people is required", status_code=404)
+    
+    user_exists = User.query.filter_by(id=request_body['user_id']).first()
+    people_exists = People.query.filter_by(uid=request_body['people_uid']).first()
+    
+    if user_exists is None:
+        raise APIException("User not found", status_code=404)
+    
+    if people_exists is None:
+        raise APIException("People not found", status_code=404)
+    
+    people_favorites_exists = PeopleFavorites.query.filter_by(user_id=request_body['user_id'], 
+                                                       people_uid=request_body['people_uid']).first()
+    if people_favorites_exists:
+        raise APIException("People favorites already exist", status_code=403)
+    
+    people_favorites = PeopleFavorites(
+        user_id = request_body['user_id'],
+        people_uid = request_body['people_uid']
+    )
+    
+    people_favorites.save()
+    
+    response_body = {
+        "msg": "ok",
+        "People Favorites": people_favorites.serialize()
     }
     
     return jsonify(response_body, 200)
