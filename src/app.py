@@ -149,7 +149,7 @@ def get_user_by_id(user_id):
     if current_user is None:
         raise APIException("Access denied", status_code=403)
     
-    if user.role.value != "admin":
+    if current_user.role.value != "admin":
         raise APIException("Access denied", status_code=403)
     
     user = User.query.get(user_id)
@@ -175,7 +175,7 @@ def add_user():
         raise APIException("The name is required", status_code=404)
     
     if "phone" not in request_body or request_body['phone'] == "":
-        raise APIException("The phone is requierd", status_code=404)
+        raise APIException("The phone is required", status_code=404)
     
     if "email" not in request_body or request_body['email'] == "":
         raise APIException("The email is required", status_code=404)
@@ -496,9 +496,7 @@ def edit_people(people_uid):
     }
     
     return jsonify(response_body, 200)
-    
-    
-#Eliminar de people favorites    
+      
 @app.route("/people/<int:people_uid>", methods=['DELETE'])
 @jwt_required()
 def delete_people(people_uid):
@@ -515,7 +513,8 @@ def delete_people(people_uid):
     
     people_details = PeopleDetails.query.filter_by(uid=people_uid).first()
     vehicles_people = VehiclesPeople.query.filter_by(people_uid=people_uid)
-    starshipsPeople = StarshipsPeople.query.filter_by(people_uid=people_uid)
+    starships_people = StarshipsPeople.query.filter_by(people_uid=people_uid)
+    people_favorites = PeopleFavorites.query.filter_by(people_uid=people_uid) 
     
     if people_details:
         people_details.delete()
@@ -523,8 +522,11 @@ def delete_people(people_uid):
     if vehicles_people:
         vehicles_people.delete()
            
-    if starshipsPeople:
-        starshipsPeople.delete()
+    if starships_people:
+        starships_people.delete()
+               
+    if people_favorites:
+        people_favorites.delete()
                
     people.delete()
     
@@ -633,8 +635,6 @@ def edit_details_people(people_uid):
     if planet_exists is None:
         raise APIException("The planet not exist", status_code=404)
     
-    if "uid" in request_body and request_body["uid"] != "":
-        people_details.uid = request_body['uid']
         
     if "height" in request_body and request_body["height"] != "":
         people_details.height = request_body['height']
@@ -666,6 +666,10 @@ def edit_details_people(people_uid):
     if "edited" in request_body and request_body["edited"] != "":
         raise APIException("Edition date cannot be edited", status_code=404)
     
+    if "uid" in request_body and request_body["uid"] != "":
+        raise APIException("The uid cannot be edited", status_code=404)
+
+        
     people_details.edited = datetime.utcnow()
 
     people_details.update()
@@ -769,7 +773,42 @@ def add_people_favorites():
     }
     
     return jsonify(response_body, 200)
+   
+@app.route("/people/favorites/<int:user_id>", methods=['DELETE'])
+@jwt_required()
+def delete_people_favorites(user_id):
+    request_body = request.get_json(force=True, silent=True)
     
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "people_uid" not in request_body or request_body['people_uid'] == "":
+        raise APIException("The people uid is required", status_code=404)
+    
+    people = People.query.filter_by(uid=request_body['people_uid']).first()
+
+    if people is None:
+        raise APIException("People not found", status_code=404)
+    
+    people_favorites = PeopleFavorites.query.filter_by(user_id=user_id, people_uid=request_body['people_uid']).first()   
+    
+    if people_favorites is None:
+        raise APIException("People favorites not found", status_code=404) 
+    
+    people_favorites.delete()
+    
+    response_body = {
+        "msg": "ok"
+    }
+    
+    return jsonify(response_body, 200)
+     
     
 # <------------------------------Planets------------------------------>
 @app.route('/planets', methods=['GET'])
@@ -790,7 +829,7 @@ def get_planets():
    
     return jsonify(response_body, 200)
     
-""" @app.route('/planets/<int:planets_uid>', methods=['GET'])
+@app.route('/planets/<int:planets_uid>', methods=['GET'])
 def get_planets_by_uid(planets_uid):
     planets = Planets.query.filter_by(uid=planets_uid).first()
     
@@ -802,7 +841,7 @@ def get_planets_by_uid(planets_uid):
         "Planet": planets.serialize()
     }
     
-    return jsonify(response_body, 200) """
+    return jsonify(response_body, 200)
         
 @app.route('/planets', methods=['POST'])
 @jwt_required()
@@ -916,7 +955,270 @@ def delete_planets(planets_uid):
     return jsonify(response_body)
 
 # <------------------------------PlanetsDetails------------------------------>
+@app.route("/planets/details/<int:planets_uid>", methods=['GET'])
+def get_details_planets(planets_uid):
+    planets_details = PlanetsDetails.query.filter_by(uid=planets_uid).first()
+    
+    if planets_details is None:
+        raise APIException("Planets details not found", status_code=404)
+    
+    response_body = {
+        "msg":"ok",
+        "result": planets_details.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+
+@app.route("/planets/details", methods=['POST'])
+@jwt_required()
+def add_details_planets():
+    request_body = request.get_json(force=True, silent=True)
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "uid" not in request_body or request_body['uid']=="":
+        raise APIException("The uid of planets is required", status_code=404)
+    
+    if "created" in request_body and request_body["created"] != "":
+        raise APIException("Creation date cannot be edited", status_code=404)
+        
+    if "edited" in request_body and request_body["edited"] != "":
+        raise APIException("Edition date cannot be edited", status_code=404)
+    
+    planets_exists = Planets.query.filter_by(uid=request_body['uid']).first()
+    
+    if planets_exists is None:
+        raise APIException("Planets not found", status_code=400)
+      
+    planets_details_exists = PlanetsDetails.query.filter_by(uid=request_body['uid']).first()
+    
+    if planets_details_exists:
+        raise APIException("The planets details already exist", status_code=400)
+    
+    planets_details = PlanetsDetails(
+            uid=request_body['uid'],
+            diameter = request_body['diameter'],
+            rotation_period = request_body['rotation_period'],  
+            orbital_period = request_body['orbital_period'],
+            gravity = request_body['gravity'],
+            population = request_body['population'],
+            climate = request_body['climate'],
+            terrain = request_body['terrain'],
+            surface_water = request_body['surface_water'],
+            created= datetime.utcnow(),
+            edited= datetime.utcnow(),
+            description= request_body['description']
+    )
+    
+    planets_details.save()
+    
+    response_body = {
+        "msg":"ok",
+        "Planets Details": planets_details.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+    
+@app.route("/planets/details/<int:planets_uid>", methods=['PUT'])
+@jwt_required()
+def edit_details_planets(planets_uid):
+    request_body = request.get_json(force=True, silent=True)
+    planets_details = PlanetsDetails.query.filter_by(uid=planets_uid).first()
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if planets_details is None:
+        raise APIException("Planets details not found", status_code=404)
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+        
+    if "diameter" in request_body and request_body["diameter"] != "":
+        planets_details.diameter = request_body['diameter']
+        
+    if "rotation_period" in request_body and request_body["rotation_period"] != "":
+        planets_details.rotation_period = request_body['rotation_period']
+        
+    if "orbital_period" in request_body and request_body["orbital_period"] != "":
+        planets_details.orbital_period = request_body['orbital_period']
+        
+    if "gravity" in request_body and request_body["gravity"] != "":
+        planets_details.gravity = request_body['gravity']
+        
+    if "population" in request_body and request_body["population"] != "":
+        planets_details.population = request_body['population']
+        
+    if "climate" in request_body and request_body["climate"] != "":
+        planets_details.climate = request_body['climate']
+        
+    if "terrain" in request_body and request_body["terrain"] != "":
+        planets_details.terrain = request_body['terrain']
+        
+    if "surface_water" in request_body and request_body["surface_water"] != "":
+        planets_details.surface_water = request_body['surface_water']
+        
+    if "description" in request_body and request_body["description"] != "":
+        planets_details.description = request_body['description']
+        
+    if "created" in request_body and request_body["created"] != "":
+        raise APIException("Creation date cannot be edited", status_code=404)
+        
+    if "edited" in request_body and request_body["edited"] != "":
+        raise APIException("Edition date cannot be edited", status_code=404)
+    
+    if "uid" in request_body and request_body["uid"] != "":
+        raise APIException("The uid cannot be edited", status_code=404)
+    
+    planets_details.edited = datetime.utcnow()
+
+    planets_details.update()
+    
+    response_body = {
+        "msg":"ok",
+        "Planets Details": planets_details.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+    
+@app.route("/planets/details/<int:planets_uid>", methods=['DELETE'])
+@jwt_required()
+def delete_planets_details(planets_uid):
+    planets_details = PlanetsDetails.query.filter_by(uid=planets_uid).first()
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if planets_details is None:
+        raise APIException("Planets details not found", status_code=404)
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    planets_details.delete()
+    
+    response_body = {
+        "msg":"ok",  
+    }
+    
+    return jsonify(response_body, 200)
+
 # <------------------------------PlanetsFavorites------------------------------>
+@app.route("/planets/favorites/<int:user_id>", methods=['GET'])
+@jwt_required()
+def get_planets_favorites(user_id):
+    planets_favorites = PlanetsFavorites.query.filter_by(user_id=user_id)
+    favorites = list(map(lambda favorite: favorite.serialize(), planets_favorites))
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if planets_favorites is None:
+        raise APIException("Planets¨favorites not found", status_code=404)
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    response_body = {
+        "msg":"ok",
+        "Results":favorites
+    }
+    
+    return jsonify(response_body, 200)
+
+@app.route("/planets/favorites", methods=['POST'])
+@jwt_required()
+def add_planets_favorites():
+    request_body = request.get_json(force=True, silent=True)  
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "user_id" not in request_body or request_body['user_id'] == "":
+        raise APIException("The user id is required", status_code=404)
+    
+    if "planets_uid" not in request_body or request_body["planets_uid"] == "":
+        raise APIException("The uid of planets is required", status_code=404)
+    
+    user_exists = User.query.filter_by(id=request_body['user_id']).first()
+    planets_exists = Planets.query.filter_by(uid=request_body['planets_uid']).first()
+    
+    if user_exists is None:
+        raise APIException("User not found", status_code=404)
+    
+    if planets_exists is None:
+        raise APIException("Planets not found", status_code=404)
+    
+    planets_favorites_exists = PlanetsFavorites.query.filter_by(user_id=request_body['user_id'], 
+                                                       planets_uid=request_body['planets_uid']).first()
+    if planets_favorites_exists:
+        raise APIException("Planets favorites already exist", status_code=403)
+    
+    planets_favorites = PlanetsFavorites(
+        user_id = request_body['user_id'],
+        planets_uid = request_body['planets_uid']
+    )
+    
+    planets_favorites.save()
+    
+    response_body = {
+        "msg": "ok",
+        "Planets Favorites": planets_favorites.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+   
+@app.route("/planets/favorites/<int:user_id>", methods=['DELETE'])
+@jwt_required()
+def delete_planets_favorites(user_id):
+    request_body = request.get_json(force=True, silent=True)
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "planets_uid" not in request_body or request_body['planets_uid'] == "":
+        raise APIException("The planets uid is required", status_code=404)
+    
+    planets = Planets.query.filter_by(uid=request_body['planets_uid']).first()
+
+    if planets is None:
+        raise APIException("Planets not found", status_code=404)
+    
+    planets_favorites = PlanetsFavorites.query.filter_by(user_id=user_id, planets_uid=request_body['planets_uid']).first()   
+    
+    if planets_favorites is None:
+        raise APIException("Planets favorites not found", status_code=404) 
+    
+    planets_favorites.delete()
+    
+    response_body = {
+        "msg": "ok"
+    }
+    
+    return jsonify(response_body, 200)
+     
 
 # <------------------------------Vehicles------------------------------>
 @app.route('/vehicles', methods=['GET'])
@@ -937,7 +1239,7 @@ def get_vehicles():
    
     return jsonify(response_body, 200)
     
-""" @app.route('/vehicles/<int:vehicles_uid>', methods=['GET'])
+@app.route('/vehicles/<int:vehicles_uid>', methods=['GET'])
 def get_vehicles_by_uid(vehicles_uid):
     vehicles = Vehicles.query.filter_by(uid=vehicles_uid).first()
     
@@ -949,7 +1251,7 @@ def get_vehicles_by_uid(vehicles_uid):
         "Vehicle": vehicles.serialize()
     }
     
-    return jsonify(response_body, 200) """
+    return jsonify(response_body, 200)
         
 @app.route('/vehicles', methods=['POST'])
 @jwt_required()
@@ -1063,11 +1365,377 @@ def delete_vehicles(vehicles_uid):
     return jsonify(response_body)
 
 # <------------------------------VehiclesDetails------------------------------>
-# <------------------------------VehiclesFavorites------------------------------>
-# <------------------------------VehiclesPeople------------------------------>
+@app.route("/vehicles/details/<int:vehicles_uid>", methods=['GET'])
+def get_details_vehicles(vehicles_uid):
+    vehicles_details = VehiclesDetails.query.filter_by(uid=vehicles_uid).first()
+    
+    vehicles_people = VehiclesPeople.query.filter_by(vehicles_uid=vehicles_uid)
+    
+    vehicles = list(map(lambda vehicle: vehicle.serialize(), vehicles_people))
+    
+    
+    if vehicles_details is None:
+        raise APIException("Vehicles details not found", status_code=404)
+    
+    response_body = {
+        "msg":"ok",
+        "result": vehicles_details.serialize(),
+        "Pilots": vehicles
+    }
+    
+    return jsonify(response_body, 200)
 
+@app.route("/vehicles/details", methods=['POST'])
+@jwt_required()
+def add_details_vehicles():
+    request_body = request.get_json(force=True, silent=True)
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "uid" not in request_body or request_body['uid']=="":
+        raise APIException("The uid of vehicles is required", status_code=404)
+    
+    if "created" in request_body and request_body["created"] != "":
+        raise APIException("Creation date cannot be edited", status_code=404)
+        
+    if "edited" in request_body and request_body["edited"] != "":
+        raise APIException("Edition date cannot be edited", status_code=404)
+    
+    vehicles_exists = Vehicles.query.filter_by(uid=request_body['uid']).first()
+    
+    if vehicles_exists is None:
+        raise APIException("vehicles not found", status_code=400)
+      
+    vehicles_details_exists = VehiclesDetails.query.filter_by(uid=request_body['uid']).first()
+    
+    if vehicles_details_exists:
+        raise APIException("The vehicles details already exist", status_code=400)
+    
+    vehicles_details = VehiclesDetails(
+            uid=request_body['uid'],
+            model=request_body['model'],
+            vehicle_class = request_body['vehicle_class'],
+            manufacturer = request_body['manufacturer'],  
+            cost_in_credits = request_body['cost_in_credits'],
+            length = request_body['length'],
+            crew = request_body['crew'],
+            passengers = request_body['passengers'],
+            max_atmosphering_speed = request_body['max_atmosphering_speed'],
+            cargo_capacity = request_body['cargo_capacity'],
+            consumables = request_body['consumables'],
+            created= datetime.utcnow(),
+            edited= datetime.utcnow(),
+            description= request_body['description']
+    )
+    
+    vehicles_details.save()
+    
+    response_body = {
+        "msg":"ok",
+        "Vehicles Details": vehicles_details.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+    
+@app.route("/vehicles/details/<int:vehicles_uid>", methods=['PUT'])
+@jwt_required()
+def edit_details_vehicles(vehicles_uid):
+    request_body = request.get_json(force=True, silent=True)
+    vehicles_details = VehiclesDetails.query.filter_by(uid=vehicles_uid).first()
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if vehicles_details is None:
+        raise APIException("Vehicles details not found", status_code=404)
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+        
+    if "model" in request_body and request_body["model"] != "":
+        vehicles_details.model = request_body['model']
+        
+    if "vehicle_class" in request_body and request_body["vehicle_class"] != "":
+        vehicles_details.vehicle_class = request_body['vehicle_class']
+        
+    if "manufacturer" in request_body and request_body["manufacturer"] != "":
+        vehicles_details.manufacturer = request_body['manufacturer']
+        
+    if "cost_in_credits" in request_body and request_body["cost_in_credits"] != "":
+        vehicles_details.cost_in_credits = request_body['cost_in_credits']
+        
+    if "length" in request_body and request_body["length"] != "":
+        vehicles_details.length = request_body['length']
+        
+    if "crew" in request_body and request_body["crew"] != "":
+        vehicles_details.crew = request_body['crew']
+        
+    if "passengers" in request_body and request_body["passengers"] != "":
+        vehicles_details.passengers = request_body['passengers']
+        
+    if "max_atmosphering_speed" in request_body and request_body["max_atmosphering_speed"] != "":
+        vehicles_details.max_atmosphering_speed = request_body['max_atmosphering_speed']
+        
+    if "cargo_capacity" in request_body and request_body["cargo_capacity"] != "":
+        vehicles_details.cargo_capacity = request_body['cargo_capacity']
+        
+    if "consumables" in request_body and request_body["consumables"] != "":
+        vehicles_details.consumables = request_body['consumables']
+        
+    if "description" in request_body and request_body["description"] != "":
+        vehicles_details.description = request_body['description']
+        
+    if "created" in request_body and request_body["created"] != "":
+        raise APIException("Creation date cannot be edited", status_code=404)
+        
+    if "edited" in request_body and request_body["edited"] != "":
+        raise APIException("Edition date cannot be edited", status_code=404)
+    
+    if "uid" in request_body and request_body["uid"] != "":
+        raise APIException("The uid cannot be edited", status_code=404)
+    
+    vehicles_details.edited = datetime.utcnow()
+
+    vehicles_details.update()
+    
+    response_body = {
+        "msg":"ok",
+        "Vehicles Details": vehicles_details.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+    
+@app.route("/vehicles/details/<int:vehicles_uid>", methods=['DELETE'])
+@jwt_required()
+def delete_vehicles_details(vehicles_uid):
+    vehicles_details = VehiclesDetails.query.filter_by(uid=vehicles_uid).first()
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if vehicles_details is None:
+        raise APIException("Vehicles details not found", status_code=404)
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    vehicles_details.delete()
+    
+    response_body = {
+        "msg":"ok",  
+    }
+    
+    return jsonify(response_body, 200)
+
+# <------------------------------VehiclesFavorites------------------------------>
+@app.route("/vehicles/favorites/<int:user_id>", methods=['GET'])
+@jwt_required()
+def get_vehicles_favorites(user_id):
+    vehicles_favorites = VehiclesFavorites.query.filter_by(user_id=user_id)
+    favorites = list(map(lambda favorite: favorite.serialize(), vehicles_favorites))
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if vehicles_favorites is None:
+        raise APIException("Vehicles¨favorites not found", status_code=404)
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    response_body = {
+        "msg":"ok",
+        "Results":favorites
+    }
+    
+    return jsonify(response_body, 200)
+
+@app.route("/vehicles/favorites", methods=['POST'])
+@jwt_required()
+def add_vehicles_favorites():
+    request_body = request.get_json(force=True, silent=True)  
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "user_id" not in request_body or request_body['user_id'] == "":
+        raise APIException("The user id is required", status_code=404)
+    
+    if "vehicles_uid" not in request_body or request_body["vehicles_uid"] == "":
+        raise APIException("The uid of vehicles is required", status_code=404)
+    
+    user_exists = User.query.filter_by(id=request_body['user_id']).first()
+    vehicles_exists = Vehicles.query.filter_by(uid=request_body['vehicles_uid']).first()
+    
+    if user_exists is None:
+        raise APIException("User not found", status_code=404)
+    
+    if vehicles_exists is None:
+        raise APIException("Vehicles not found", status_code=404)
+    
+    vehicles_favorites_exists = VehiclesFavorites.query.filter_by(user_id=request_body['user_id'], 
+                                                       vehicles_uid=request_body['vehicles_uid']).first()
+    if vehicles_favorites_exists:
+        raise APIException("Vehicles favorites already exist", status_code=403)
+    
+    vehicles_favorites = VehiclesFavorites(
+        user_id = request_body['user_id'],
+        vehicles_uid = request_body['vehicles_uid']
+    )
+    
+    vehicles_favorites.save()
+    
+    response_body = {
+        "msg": "ok",
+        "Vehicles Favorites": vehicles_favorites.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+   
+@app.route("/vehicles/favorites/<int:user_id>", methods=['DELETE'])
+@jwt_required()
+def delete_vehicles_favorites(user_id):
+    request_body = request.get_json(force=True, silent=True)
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "vehicles_uid" not in request_body or request_body['vehicles_uid'] == "":
+        raise APIException("The vehicles uid is required", status_code=404)
+    
+    vehicles = Vehicles.query.filter_by(uid=request_body['vehicles_uid']).first()
+
+    if vehicles is None:
+        raise APIException("Vehicles not found", status_code=404)
+    
+    vehicles_favorites = VehiclesFavorites.query.filter_by(user_id=user_id, vehicles_uid=request_body['vehicles_uid']).first()   
+    
+    if vehicles_favorites is None:
+        raise APIException("Vehicles favorites not found", status_code=404) 
+    
+    vehicles_favorites.delete()
+    
+    response_body = {
+        "msg": "ok"
+    }
+    
+    return jsonify(response_body, 200)
+     
+# <------------------------------VehiclesPeople------------------------------>
+@app.route("/vehicles/people", methods=['POST'])
+@jwt_required()
+def add_vehicles_people():
+    request_body = request.get_json(force=True, silent=True)
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "people_uid" not in request_body or request_body['people_uid'] == "":
+        raise APIException("The people uid is required", status_code=404)
+    
+    if "vehicles_uid" not in request_body or request_body["vehicles_uid"] == "":
+        raise APIException("The uid of vehicles is required", status_code=404)
+    
+    people_exists = People.query.filter_by(uid=request_body['people_uid']).first()
+    vehicles_exists = Vehicles.query.filter_by(uid=request_body['vehicles_uid']).first()
+    
+    if people_exists is None:
+        raise APIException("People not found", status_code=404)
+    
+    if vehicles_exists is None:
+        raise APIException("Vehicles not found", status_code=404)
+    
+    vehicles_people_exists = VehiclesPeople.query.filter_by(people_uid=request_body['people_uid'], 
+                                                       vehicles_uid=request_body['vehicles_uid']).first()
+    if vehicles_people_exists:
+        raise APIException("Vehicles people already exist", status_code=403)
+    
+    vehicles_people = VehiclesPeople(
+        people_uid = request_body['people_uid'],
+        vehicles_uid = request_body['vehicles_uid']
+    )
+    
+    vehicles_people.save()
+    
+    response_body = {
+        "msg": "ok",
+        "Vehicles People": vehicles_people.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+
+@app.route("/vehicles/people", methods=['DELETE'])
+@jwt_required()
+def delete_vehicles_people():
+    request_body = request.get_json(force=True, silent=True)
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "people_uid" not in request_body or request_body['people_uid'] == "":
+        raise APIException("The people uid is required", status_code=404)
+    
+    if "vehicles_uid" not in request_body or request_body['vehicles_uid'] == "":
+        raise APIException("The vehicles uid is required", status_code=404)
+    
+    people_exists = People.query.filter_by(uid=request_body['people_uid']).first()
+    vehicles = Vehicles.query.filter_by(uid=request_body['vehicles_uid']).first()
+    
+    if people_exists is None:
+        raise APIException("People not found", status_code=404)
+
+    if vehicles is None:
+        raise APIException("Vehicles not found", status_code=404)
+    
+    vehicles_people = VehiclesPeople.query.filter_by(people_uid=request_body['people_uid'], vehicles_uid=request_body['vehicles_uid']).first()   
+    
+    if vehicles_people is None:
+        raise APIException("Vehicles people not found", status_code=404) 
+    
+    vehicles_people.delete()
+    
+    response_body = {
+        "msg": "ok"
+    }
+    
+    return jsonify(response_body, 200)
+    
 # <------------------------------Starships------------------------------>
-@app.route('/starships', methods=['GET'])
+@app.route("/starships", methods=['GET'])
 def get_starships():
     starships = Starships.query.all()
    
@@ -1085,7 +1753,7 @@ def get_starships():
    
     return jsonify(response_body, 200)
     
-""" @app.route('/starships/<int:starships_uid>', methods=['GET'])
+@app.route('/starships/<int:starships_uid>', methods=['GET'])
 def get_starships_by_uid(starships_uid):
     starships = Starships.query.filter_by(uid=starships_uid).first()
     
@@ -1097,7 +1765,7 @@ def get_starships_by_uid(starships_uid):
         "Vehicle": starships.serialize()
     }
     
-    return jsonify(response_body, 200) """
+    return jsonify(response_body, 200)
         
 @app.route('/starships', methods=['POST'])
 @jwt_required()
@@ -1210,8 +1878,383 @@ def delete_starships(starships_uid):
     return jsonify(response_body)
 
 # <------------------------------StarshipsDetails------------------------------>
+@app.route("/starships/details/<int:starships_uid>", methods=['GET'])
+def get_details_starships(starships_uid):
+    starships_details = StarshipsDetails.query.filter_by(uid=starships_uid).first()
+    
+    starships_people = StarshipsPeople.query.filter_by(starships_uid=starships_uid)
+    
+    starships = list(map(lambda starship: starship.serialize(), starships_people))
+    
+    
+    if starships_details is None:
+        raise APIException("Starships details not found", status_code=404)
+    
+    response_body = {
+        "msg":"ok",
+        "result": starships_details.serialize(),
+        "Pilots": starships
+    }
+    
+    return jsonify(response_body, 200)
+
+@app.route("/starships/details", methods=['POST'])
+@jwt_required()
+def add_details_starships():
+    request_body = request.get_json(force=True, silent=True)
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "uid" not in request_body or request_body['uid']=="":
+        raise APIException("The uid of starships is required", status_code=404)
+    
+    if "created" in request_body and request_body["created"] != "":
+        raise APIException("Creation date cannot be edited", status_code=404)
+        
+    if "edited" in request_body and request_body["edited"] != "":
+        raise APIException("Edition date cannot be edited", status_code=404)
+    
+    starships_exists = Starships.query.filter_by(uid=request_body['uid']).first()
+    
+    if starships_exists is None:
+        raise APIException("Starships not found", status_code=400)
+      
+    starships_details_exists = StarshipsDetails.query.filter_by(uid=request_body['uid']).first()
+    
+    if starships_details_exists:
+        raise APIException("The starships details already exist", status_code=400)
+    
+    starships_details = StarshipsDetails(
+            uid=request_body['uid'],
+            model=request_body['model'],
+            starship_class = request_body['starship_class'],
+            manufacturer = request_body['manufacturer'],  
+            cost_in_credits = request_body['cost_in_credits'],
+            length = request_body['length'],
+            crew = request_body['crew'],
+            passengers = request_body['passengers'],
+            max_atmosphering_speed = request_body['max_atmosphering_speed'],
+            hyperdrive_rating = request_body['hyperdrive_rating'],
+            mglt = request_body['mglt'],
+            cargo_capacity = request_body['cargo_capacity'],
+            consumables = request_body['consumables'],
+            created= datetime.utcnow(),
+            edited= datetime.utcnow(),
+            description= request_body['description']
+    )
+    
+    starships_details.save()
+    
+    response_body = {
+        "msg":"ok",
+        "Starships Details": starships_details.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+    
+@app.route("/starships/details/<int:starships_uid>", methods=['PUT'])
+@jwt_required()
+def edit_details_starships(starships_uid):
+    request_body = request.get_json(force=True, silent=True)
+    starships_details = StarshipsDetails.query.filter_by(uid=starships_uid).first()
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if starships_details is None:
+        raise APIException("Starships details not found", status_code=404)
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+
+    if "model" in request_body and request_body["model"] != "":
+        starships_details.model = request_body['model']
+        
+    if "starship_class" in request_body and request_body["starship_class"] != "":
+        starships_details.starship_class = request_body['starship_class']
+        
+    if "manufacturer" in request_body and request_body["manufacturer"] != "":
+        starships_details.manufacturer = request_body['manufacturer']
+        
+    if "cost_in_credits" in request_body and request_body["cost_in_credits"] != "":
+        starships_details.cost_in_credits = request_body['cost_in_credits']
+        
+    if "length" in request_body and request_body["length"] != "":
+        starships_details.length = request_body['length']
+        
+    if "crew" in request_body and request_body["crew"] != "":
+        starships_details.crew = request_body['crew']
+        
+    if "passengers" in request_body and request_body["passengers"] != "":
+        starships_details.passengers = request_body['passengers']
+        
+    if "max_atmosphering_speed" in request_body and request_body["max_atmosphering_speed"] != "":
+        starships_details.max_atmosphering_speed = request_body['max_atmosphering_speed']
+        
+    if "hyperdrive_rating" in request_body and request_body["hyperdrive_rating"] != "":
+        starships_details.hyperdrive_rating = request_body['hyperdrive_rating']
+        
+    if "mglt" in request_body and request_body["mglt"] != "":
+        starships_details.mglt = request_body['mglt']
+        
+    if "cargo_capacity" in request_body and request_body["cargo_capacity"] != "":
+        starships_details.cargo_capacity = request_body['cargo_capacity']
+        
+    if "consumables" in request_body and request_body["consumables"] != "":
+        starships_details.consumables = request_body['consumables']
+        
+    if "description" in request_body and request_body["description"] != "":
+        starships_details.description = request_body['description']
+        
+    if "created" in request_body and request_body["created"] != "":
+        raise APIException("Creation date cannot be edited", status_code=404)
+        
+    if "edited" in request_body and request_body["edited"] != "":
+        raise APIException("Edition date cannot be edited", status_code=404)
+    
+    if "uid" in request_body and request_body["uid"] != "":
+        raise APIException("The uid cannot be edited", status_code=404)
+    
+    starships_details.edited = datetime.utcnow()
+
+    starships_details.update()
+    
+    response_body = {
+        "msg":"ok",
+        "Starships Details": starships_details.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+    
+@app.route("/starships/details/<int:starships_uid>", methods=['DELETE'])
+@jwt_required()
+def delete_starships_details(starships_uid):
+    starships_details = StarshipsDetails.query.filter_by(uid=starships_uid).first()
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if starships_details is None:
+        raise APIException("Starships details not found", status_code=404)
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    starships_details.delete()
+    
+    response_body = {
+        "msg":"ok",  
+    }
+    
+    return jsonify(response_body, 200)
+
 # <------------------------------StarshipsFavorites------------------------------>
+@app.route("/starships/favorites/<int:user_id>", methods=['GET'])
+@jwt_required()
+def get_starships_favorites(user_id):
+    starships_favorites = StarshipFavorites.query.filter_by(user_id=user_id)
+    favorites = list(map(lambda favorite: favorite.serialize(), starships_favorites))
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if starships_favorites is None:
+        raise APIException("starships¨favorites not found", status_code=404)
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    response_body = {
+        "msg":"ok",
+        "Results":favorites
+    }
+    
+    return jsonify(response_body, 200)
+
+@app.route("/starships/favorites", methods=['POST'])
+@jwt_required()
+def add_starships_favorites():
+    request_body = request.get_json(force=True, silent=True)  
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "user_id" not in request_body or request_body['user_id'] == "":
+        raise APIException("The user id is required", status_code=404)
+    
+    if "starships_uid" not in request_body or request_body["starships_uid"] == "":
+        raise APIException("The uid of starships is required", status_code=404)
+    
+    user_exists = User.query.filter_by(id=request_body['user_id']).first()
+    starships_exists = Starships.query.filter_by(uid=request_body['starships_uid']).first()
+    
+    if user_exists is None:
+        raise APIException("User not found", status_code=404)
+    
+    if starships_exists is None:
+        raise APIException("Starships not found", status_code=404)
+    
+    starships_favorites_exists = StarshipFavorites.query.filter_by(user_id=request_body['user_id'], 
+                                                       starship_uid=request_body['starships_uid']).first()
+    if starships_favorites_exists:
+        raise APIException("Starships favorites already exist", status_code=403)
+    
+    starships_favorites = StarshipFavorites(
+        user_id = request_body['user_id'],
+        starship_uid = request_body['starships_uid']
+    )
+    
+    starships_favorites.save()
+    
+    response_body = {
+        "msg": "ok",
+        "Starships Favorites": starships_favorites.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+   
+@app.route("/starships/favorites/<int:user_id>", methods=['DELETE'])
+@jwt_required()
+def delete_starships_favorites(user_id):
+    request_body = request.get_json(force=True, silent=True)
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None:
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "starships_uid" not in request_body or request_body['starships_uid'] == "":
+        raise APIException("The starships uid is required", status_code=404)
+    
+    starships = Starships.query.filter_by(uid=request_body['starships_uid']).first()
+
+    if starships is None:
+        raise APIException("starships not found", status_code=404)
+    
+    starships_favorites = StarshipFavorites.query.filter_by(user_id=user_id, starship_uid=request_body['starships_uid']).first()   
+    
+    if starships_favorites is None:
+        raise APIException("Starships favorites not found", status_code=404) 
+    
+    starships_favorites.delete()
+    
+    response_body = {
+        "msg": "ok"
+    }
+    
+    return jsonify(response_body, 200)
+     
 # <------------------------------StarshipsPeople------------------------------>
+@app.route("/starships/people", methods=['POST'])
+@jwt_required()
+def add_starships_people():
+    request_body = request.get_json(force=True, silent=True)
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "people_uid" not in request_body or request_body['people_uid'] == "":
+        raise APIException("The people uid is required", status_code=404)
+    
+    if "starships_uid" not in request_body or request_body["starships_uid"] == "":
+        raise APIException("The uid of starships is required", status_code=404)
+    
+    people_exists = People.query.filter_by(uid=request_body['people_uid']).first()
+    starships_exists = Starships.query.filter_by(uid=request_body['starships_uid']).first()
+    
+    if people_exists is None:
+        raise APIException("People not found", status_code=404)
+    
+    if starships_exists is None:
+        raise APIException("Starships not found", status_code=404)
+    
+    starships_people_exists = StarshipsPeople.query.filter_by(people_uid=request_body['people_uid'], 
+                                                       starships_uid=request_body['starships_uid']).first()
+    if starships_people_exists:
+        raise APIException("Starships people already exist", status_code=403)
+    
+    starships_people = StarshipsPeople(
+        people_uid = request_body['people_uid'],
+        starships_uid = request_body['starships_uid']
+    )
+    
+    starships_people.save()
+    
+    response_body = {
+        "msg": "ok",
+        "Starships Favorites": starships_people.serialize()
+    }
+    
+    return jsonify(response_body, 200)
+
+@app.route("/starships/people", methods=['DELETE'])
+@jwt_required()
+def delete_starships_people():
+    request_body = request.get_json(force=True, silent=True)
+    
+    user_login = get_jwt_identity()
+    current_user = User.query.filter_by(email=user_login).first()
+    
+    if current_user is None or current_user.role.value != "admin":
+        raise APIException("Access denied", status_code=403)
+    
+    if request_body is None or not request_body:
+        raise APIException("You must send information", status_code=404)
+    
+    if "people_uid" not in request_body or request_body['people_uid'] == "":
+        raise APIException("The people uid is required", status_code=404)
+    
+    if "starships_uid" not in request_body or request_body['starships_uid'] == "":
+        raise APIException("The starships uid is required", status_code=404)
+    
+    people_exists = People.query.filter_by(uid=request_body['people_uid']).first()
+    starships_exists = Starships.query.filter_by(uid=request_body['starships_uid']).first()
+    
+    if people_exists is None:
+        raise APIException("People not found", status_code=404)
+
+    if starships_exists is None:
+        raise APIException("Starships not found", status_code=404)
+    
+    starships_people = StarshipsPeople.query.filter_by(people_uid=request_body['people_uid'], starships_uid=request_body['starships_uid']).first()   
+    
+    if starships_people is None:
+        raise APIException("Starships people not found", status_code=404) 
+    
+    starships_people.delete()
+    
+    response_body = {
+        "msg": "ok"
+    }
+    
+    return jsonify(response_body, 200)
+    
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))

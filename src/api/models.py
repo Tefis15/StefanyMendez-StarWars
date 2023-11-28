@@ -3,9 +3,6 @@ import enum
 
 db = SQLAlchemy()
 
-
-#Agregar def __repr__(self): en los favoritos y en vehiclesPeople y starshipsPeople
-
 class role(enum.Enum):
     admin = "admin"
     user = "user"
@@ -137,6 +134,9 @@ class StarshipFavorites (db.Model):
     user = db.relationship(User) 
     starships = db.relationship(Starships) 
     
+    def __repr__(self):
+        return f'<Starships {self.starships.name}>'
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -244,6 +244,9 @@ class VehiclesFavorites (db.Model):
     user = db.relationship(User) 
     vehicles = db.relationship(Vehicles) 
     
+    def __repr__(self):
+        return f'<Vehicles {self.vehicles.name}>'
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -305,7 +308,6 @@ class PlanetsDetails(db.Model):
     edited = db.Column(db.DateTime(timezone=True), nullable=False)
     planets = db.relationship(Planets)
 
-
     def __repr__(self):
         return f'<Planets Details {self.planets.name}'
     
@@ -347,6 +349,9 @@ class PlanetsFavorites (db.Model):
     planets_uid = db.Column(db.Integer, db.ForeignKey(Planets.uid), nullable=False)
     user = db.relationship(User) 
     planets = db.relationship(Planets) 
+    
+    def __repr__(self):
+        return f'<Planets {self.planets.name}>'
     
     def serialize(self):
         return {
@@ -450,6 +455,9 @@ class PeopleFavorites (db.Model):
     user = db.relationship(User) 
     people = db.relationship(People) 
     
+    def __repr__(self):
+        return f'<People {self.people.name}>'   
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -475,11 +483,14 @@ class VehiclesPeople(db.Model):
     people = db.relationship(People) 
     vehicles = db.relationship(Vehicles) 
     
+    def __repr__(self):
+        return f'<Vehicles People {self.vehicles.name} {self.people.name}>'
+    
     def serialize(self):
         return {
             "id": self.id,
             "people_uid": self.people.serialize(),
-            "vehicles_id": self.vehicles.serialize(),
+            "vehicles_uid": self.vehicles.serialize(),
         }
     
     def save(self):
@@ -500,11 +511,14 @@ class StarshipsPeople(db.Model):
     people = db.relationship(People) 
     starships = db.relationship(Starships) 
     
+    def __repr__(self):
+        return f'<Starships People {self.starships.name} {self.people.name}>'
+    
     def serialize(self):
         return {
             "id": self.id,
             "people_uid": self.people.serialize(),
-            "starships_id": self.starships.serialize(),
+            "starships_uid": self.starships.serialize(),
         }
     
     def save(self):
