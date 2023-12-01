@@ -28,5 +28,17 @@ body{
 .nav-span{
     font-size: 1.3rem;
     font-weight: 900;
- 
+}
+.btn-nav{
+    color:black;
+    background-color: #FFC107;
+
+    &:hover {
+        box-shadow: 0 12px 16px 0 rgba(2, 82, 173, 0.377), 0 17px 50px 0 rgba(23, 105, 199, 0.377);
+      }
+    
+      &:active {
+        -webkit-transform: translateY(0.25em);
+        transform: translateY(0.25em);
+      }
 }
