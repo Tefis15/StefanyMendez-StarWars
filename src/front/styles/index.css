@@ -1,3 +1,32 @@
 /* 
     General Styles used on every website (Don't Repeat Yourself)
 */
+body{ 
+    background-image: url("https://fondosmil.com/fondo/81725.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    font-family: 'Ysabeau SC', sans-serif;
+}
+.navbar{
+    background: black;
+}
+.logo-nav{
+    width: 5rem;
+    height: 3rem;
+}
+.nav-link {
+    color: 	#FFC107;
+  
+    &:hover {
+      color: #2225be;
+      -webkit-transform: translateY(-0.25em);
+      transform: translateY(-0.25em);
+    }
+  }
+  
+.nav-span{
+    font-size: 1.3rem;
+    font-weight: 900;
+ 
+}
