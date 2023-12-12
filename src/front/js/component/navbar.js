@@ -4,7 +4,7 @@ import starWars from "../../img/starwars.png"
 
 export const Navbar = () => {
 	return (
-		<nav className="navbar navbar-expand-lg">
+		<nav className="navbar navbar-expand-lg sticky-top">
 			<div className="container-fluid">
 				<Link to="/" className="text-decoration-none text-white ms-2">
 					<img src={starWars} alt="Logo" className="logo-nav d-inline-block align-text-center me-2" />
@@ -49,12 +49,12 @@ export const Navbar = () => {
 						</li>
 					</ul>
 					<ul className="navbar-nav mb-lg-0 ms-auto">
-						<li className="nav-item ms-2" /* hidden={store.buttons_admin_tech.login}*/>
+						<li className="nav-item ms-2 mb-2" /* hidden={store.buttons_admin_tech.login}*/>
 							<Link to="/login" className="text-decoration-none" >
 								<button className="btn btn-nav"><i className="fa-solid fa-user-astronaut me-2"></i>LogIn</button>
 							</Link>
 						</li>
-						<li className="nav-item ms-2" /* hidden={store.buttons_admin_tech.login}*/>
+						<li className="nav-item ms-2 mb-2" /* hidden={store.buttons_admin_tech.login}*/>
 							<Link to="/login" className="text-decoration-none" >
 								<button className="btn btn-nav"><i className="fa-solid fa-meteor me-2"></i>SignIn</button>
 							</Link>
