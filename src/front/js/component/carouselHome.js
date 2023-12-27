@@ -7,7 +7,7 @@ const CarouselHome = ({ urlImg, title, year, description, active }, ...props) =>
 
     <div className={`carousel-item ${active}`} data-bs-interval="10000">
 
-      <div className='row row-cols-2 row-cols-md-2 rows-cols-sm-2 rows-cols-lg-2'>
+      <div className='row row-cols-1 row-cols-md-2 rows-cols-sm-1 rows-cols-lg-2'>
         <div className='col'>
           <h2 className='title-movie'>{title} <span className='fst-italic'>{year}</span></h2>
           <p className='text-movie'>{description}</p>

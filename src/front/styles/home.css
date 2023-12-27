@@ -1,12 +1,11 @@
-
 .text-welcome{
-    position:relative;
+    position:relative;  
     color:white;
     font-size:5rem;
     text-align:center;
     font-weight: 900;
     font-family:'Potta One', serif;
-    text-shadow: 3px 6px 1px #111499;
+    text-shadow: 3px 6px 1px #111499 ;
 }
 .title-home{
     color: #FFC107;
@@ -54,6 +53,8 @@
     text-align: justify;
 }.img-movie{
     width: 80%;
-    height: 92%;
-    
+    height: 92%;  
+}
+.container-home{
+    margin-bottom: 40%;
 }
