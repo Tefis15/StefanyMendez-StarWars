@@ -2,11 +2,11 @@
     General Styles used on every website (Don't Repeat Yourself)
 */
 body{ 
-    /* background-image: url("https://fondosmil.com/fondo/81725.jpg");
+    background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,1)), url("https://fondosmil.com/fondo/81725.jpg");
     background-repeat: no-repeat;
     background-size: cover;
-    background-attachment: fixed;  */
-    background-color: black;
+    background-attachment: fixed;
+    background-position: center;  
     font-family: 'Ysabeau SC', sans-serif;
 }
 .navbar{
@@ -49,4 +49,7 @@ body{
     right: 35px;
     cursor: pointer;
     padding: 1rem;
+}
+.foo{
+    margin-top: auto;
 }

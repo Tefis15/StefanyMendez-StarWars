@@ -50,12 +50,17 @@ export const Navbar = () => {
 					</ul>
 					<ul className="navbar-nav mb-lg-0 ms-auto">
 						<li className="nav-item ms-2 mb-2" /* hidden={store.buttons_admin_tech.login}*/>
+							<Link to="/profile" className="text-decoration-none" >
+								<button className="btn btn-nav"><i className="fa-solid fa-earth-americas me-2"></i>Profile</button>
+							</Link>
+						</li>
+						<li className="nav-item ms-2 mb-2" /* hidden={store.buttons_admin_tech.login}*/>
 							<Link to="/login" className="text-decoration-none" >
 								<button className="btn btn-nav"><i className="fa-solid fa-user-astronaut me-2"></i>LogIn</button>
 							</Link>
 						</li>
 						<li className="nav-item ms-2 mb-2" /* hidden={store.buttons_admin_tech.login}*/>
-							<Link to="/login" className="text-decoration-none" >
+							<Link to="/signin" className="text-decoration-none" >
 								<button className="btn btn-nav"><i className="fa-solid fa-meteor me-2"></i>SignIn</button>
 							</Link>
 						</li>

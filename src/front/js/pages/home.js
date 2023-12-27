@@ -13,7 +13,7 @@ export const Home = () => {
 			<video className="videoBgHome" src={videoIntro} autoPlay muted loop >
 			</video>
 			<h1 className="text-welcome text-white my-5" >May the force be with you</h1>
-			<div className="container my-5">
+			<div className="container container-home my-5">
 				<h1 className="title-home mb-3">
 					Never forget...
 				</h1>

@@ -100,6 +100,8 @@ def login():
     
     if bcrypt.check_password_hash(user.password, request_body['password']) is False:
         raise APIException('The password is incorrect', 401)
+    
+    # AGREGAR VERIFICACION SI EL USUARIO ESTA ACTIVO O NO 
  
     access_token = create_access_token(identity=request_body['email'])
     
