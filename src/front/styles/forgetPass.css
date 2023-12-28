@@ -20,4 +20,9 @@
     border-bottom: 0.6px solid white;
     border-top: 0.2px solid grey;
     color: white;
+
+    &:focus{
+      background: transparent;
+      color: white;
+  }
   }
