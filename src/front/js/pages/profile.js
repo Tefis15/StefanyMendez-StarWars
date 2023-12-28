@@ -1,45 +1,72 @@
-import React, { useContext, useEffect, useState } from 'react'
-import '../../styles/login.css'
-import { Link, useNavigate } from 'react-router-dom'
-import { Context } from '../store/appContext'
+import React, { useContext, useState } from "react";
+import { Context } from "../store/appContext";
+import "../../styles/profile.css";
 
-const Login = () => {
+export const Profile = () => {
     const { store, actions } = useContext(Context);
     const [showPass, setShowPass] = useState(false)
-    const navigate = useNavigate()
+    const [showConfirmPass, setShowConfirmPass] = useState(false)
 
-    /*  useEffect(()=>{
-         store.is_logued ? navigate('/') : null
-     },[store.is_logued])
-  */
     return (
-        <div className='container-login pb-3'>
+
+        <div className='container container-profile pb-5'>
             <div className='text-center'>
-                <img className='img-form-login mt-5' src='https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/19cac168-e90a-4566-ab1a-353b45bcd138/dfad1ry-137c781b-823b-4675-b128-5de658c05e2a.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzE5Y2FjMTY4LWU5MGEtNDU2Ni1hYjFhLTM1M2I0NWJjZDEzOFwvZGZhZDFyeS0xMzdjNzgxYi04MjNiLTQ2NzUtYjEyOC01ZGU2NThjMDVlMmEucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.dUvx1qqFiztBegCskrsQFBGpLAb8baPXYD-1dih28HE' ></img>
+                <img className='img-form-profile mt-5' src='https://mir-s3-cdn-cf.behance.net/project_modules/disp/691daf33084637.569f59c582a9b.gif' ></img>
             </div>
             <form className="row g-3 mx-4 mt-2">
                 <div className="form-floating mb-3">
-                    <input type="email" className="form-control input-login" id="floatingInput" placeholder="name@example.com" />
+                    <input
+                        type="text"
+                        className="form-control input-profile"
+                        id="floatingInput" 
+                        placeholder='Stefany'
+                        defaultValue="Stefany"
+                        readOnly
+                    />
+                    <label className='text-warning' for="floatingInput">Name</label>
+                </div>
+                <div className="form-floating mb-3">
+                    <input
+                        type="email"
+                        className="form-control input-profile"
+                        id="floatingInput"
+                        defaultValue="tefa15@hotmail.es"
+                        readOnly
+                    />
                     <label className='text-warning' for="floatingInput">Email address</label>
                 </div>
+                <div className="form-floating mb-3">
+                    <input
+                        type="text"
+                        className="form-control input-profile"
+                        defaultValue="85984225"
+                        id="floatingInput"
+                        placeholder='Phone'
+                    />
+                    <label className='text-warning' for="floatingInput">Phone</label>
+                </div>
                 <div className="form-floating d-flex position-relative align-items-center">
-                    <input type={showPass ? "text" : "password"} className="form-control input-login" id="floatingPassword" placeholder="Password" />
+                    <input type={showPass ? "text" : "password"} className="form-control input-profile " id="floatingPassword" placeholder="Password" />
                     <div onClick={() => { setShowPass(!showPass) }}>
                         {showPass ?
                             <i className="fa-solid fa-eye text-warning"></i> :
                             <i className="fa-solid fa-eye-slash text-warning"></i>
                         }
                     </div>
-                    <label className="text-warning" for="floatingPassword">Password</label>
+                    <label className="text-warning" for="floatingPassword">New Password</label>
                 </div>
-                <div className='text-start text-warning'>
-                    <Link to="/forgetpass" className='text-decoration-none text-warning'>
-                        <span>Forget Password?</span>
-                    </Link>
+                <div className="form-floating d-flex position-relative align-items-center">
+                    <input type={showConfirmPass ? "text" : "password"} className="form-control input-profile" id="floatingPassword" placeholder="Password" />
+                    <div onClick={() => { setShowConfirmPass(!showConfirmPass) }}>
+                        {showConfirmPass ?
+                            <i className="fa-solid fa-eye text-warning"></i> :
+                            <i className="fa-solid fa-eye-slash text-warning"></i>
+                        }
+                    </div>
+                    <label className="text-warning" for="floatingPassword">Confirm Password</label>
                 </div>
                 <div className='text-center mb-2'>
-                    <button className="btn btn-warning" type="submit" onClick={() => {
-
+                    <button className="btn btn-warning mt-2" type="submit" onClick={() => {
                         Swal.fire({
                             title: "Welcome Back",
                             timer: 2000,
@@ -68,17 +95,10 @@ const Login = () => {
                             `
                         })
                     }
-                    }>LogIn
+                    }>Save Chages
                     </button>
-                    <div className='text-end text-warning'>
-                        <Link to="/signin" className='text-decoration-none text-warning'>
-                            <span>or SignIn <i className="fa-solid fa-shuttle-space"></i></span>
-                        </Link>
-                    </div>
                 </div>
             </form>
         </div>
     )
 }
-
-export default Login

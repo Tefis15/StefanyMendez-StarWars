@@ -12,6 +12,7 @@ import BackToTopBtn from "./component/backToTop";
 import Login from "./pages/login";
 import Signin from "./pages/signin";
 import ForgetPass from "./pages/forgetPass.js";
+import { Profile } from "./pages/profile.js";
 
 //create your first component
 const Layout = () => {
@@ -31,6 +32,7 @@ const Layout = () => {
                         <Route element={<Login />} path="/login" />
                         <Route element={<Signin />} path="/signin" />
                         <Route element={<ForgetPass/>} path="/forgetpass" />
+                        <Route element={<Profile/>} path="/profile" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}
