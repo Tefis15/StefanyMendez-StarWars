@@ -66,7 +66,7 @@ export const Profile = () => {
                     <label className="text-warning" for="floatingPassword">Confirm Password</label>
                 </div>
                 <div className='text-center mb-2'>
-                    <button className="btn btn-warning mt-2" type="submit" onClick={() => {
+                    <button className="btn btn-yellow mt-2" type="submit" onClick={() => {
                         Swal.fire({
                             title: "Welcome Back",
                             timer: 2000,
