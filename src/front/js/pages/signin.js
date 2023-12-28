@@ -35,8 +35,8 @@ const Signin = () => {
                     <input type={showPass ? "text" : "password"} className="form-control input-signin" id="floatingPassword" placeholder="Password" />
                     <div onClick={() => { setShowPass(!showPass) }}>
                         {showPass ?
-                            <i className="fa-solid fa-eye text-warning"></i> :
-                            <i class="fa-solid fa-eye-slash text-warning"></i>
+                            <i className="fa-solid fa-eye text-yellow"></i> :
+                            <i class="fa-solid fa-eye-slash text-yellow"></i>
                         }
                     </div>
                     <label className="text-warning" for="floatingPassword">Password</label>
@@ -45,14 +45,14 @@ const Signin = () => {
                     <input type={showConfirmPass ? "text" : "password"} className="form-control input-signin" id="floatingPassword" placeholder="Password" />
                     <div onClick={() => { setShowConfirmPass(!showConfirmPass) }}>
                         {showConfirmPass ?
-                            <i className="fa-solid fa-eye text-warning"></i> :
-                            <i class="fa-solid fa-eye-slash text-warning"></i>
+                            <i className="fa-solid fa-eye text-yellow"></i> :
+                            <i class="fa-solid fa-eye-slash text-yellow"></i>
                         }
                     </div>
                     <label className="text-warning" for="floatingPassword">Confirm Password</label>
                 </div>
                 <div className='text-center mb-2'>
-                    <button className="btn btn-warning mt-2" type="submit" onClick={() => {
+                    <button className="btn btn-yellow mt-2" type="submit" onClick={() => {
                         Swal.fire({
                             title: "Welcome Back",
                             timer: 2000,
@@ -83,8 +83,8 @@ const Signin = () => {
                     }
                     }>SignIn
                     </button>
-                    <div className='text-end text-warning'>
-                        <Link to="/login" className='text-decoration-none text-warning'>
+                    <div className='text-end text-yellow'>
+                        <Link to="/login" className='text-decoration-none text-yellow'>
                             <span>or LogIn <i class="fa-solid fa-shuttle-space"></i></span>
                         </Link>
                     </div>

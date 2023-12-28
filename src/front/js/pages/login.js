@@ -26,19 +26,19 @@ const Login = () => {
                     <input type={showPass ? "text" : "password"} className="form-control input-login" id="floatingPassword" placeholder="Password" />
                     <div onClick={() => { setShowPass(!showPass) }}>
                         {showPass ?
-                            <i className="fa-solid fa-eye text-warning"></i> :
-                            <i className="fa-solid fa-eye-slash text-warning"></i>
+                            <i className="fa-solid fa-eye text-yellow"></i> :
+                            <i className="fa-solid fa-eye-slash text-yellow"></i>
                         }
                     </div>
                     <label className="text-warning" for="floatingPassword">Password</label>
                 </div>
                 <div className='text-start text-warning'>
-                    <Link to="/forgetpass" className='text-decoration-none text-warning'>
+                    <Link to="/forgetpass" className='text-decoration-none text-yellow'>
                         <span>Forget Password?</span>
                     </Link>
                 </div>
                 <div className='text-center mb-2'>
-                    <button className="btn btn-warning" type="submit" onClick={() => {
+                    <button className="btn btn-yellow" type="submit" onClick={() => {
 
                         Swal.fire({
                             title: "Welcome Back",
@@ -70,8 +70,8 @@ const Login = () => {
                     }
                     }>LogIn
                     </button>
-                    <div className='text-end text-warning'>
-                        <Link to="/signin" className='text-decoration-none text-warning'>
+                    <div className='text-end text-yellow'>
+                        <Link to="/signin" className='text-decoration-none text-yellow'>
                             <span>or SignIn <i className="fa-solid fa-shuttle-space"></i></span>
                         </Link>
                     </div>

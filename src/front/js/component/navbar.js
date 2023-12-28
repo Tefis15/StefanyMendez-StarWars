@@ -9,7 +9,7 @@ export const Navbar = () => {
 				<Link to="/" className="text-decoration-none text-white ms-2">
 					<img src={starWars} alt="Logo" className="logo-nav d-inline-block align-text-center me-2" />
 				</Link>
-				<button className="navbar-toggler " type="button" data-bs-toggle="collapse"
+				<button className="navbar-toggler text-warning" type="button" data-bs-toggle="collapse"
 					data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
 					<i className="fa-solid fa-bars"></i>
 				</button>
@@ -51,22 +51,22 @@ export const Navbar = () => {
 					<ul className="navbar-nav mb-lg-0 ms-auto">
 						<li className="nav-item ms-2 mb-2" /* hidden={store.buttons_admin_tech.login}*/>
 							<Link to="/profile" className="text-decoration-none" >
-								<button className="btn btn-nav"><i className="fa-solid fa-earth-americas me-2"></i>Profile</button>
+								<button className="btn btn-yellow"><i className="fa-solid fa-earth-americas me-2"></i>Profile</button>
 							</Link>
 						</li>
 						<li className="nav-item ms-2 mb-2" /* hidden={store.buttons_admin_tech.login}*/>
 							<Link to="/login" className="text-decoration-none" >
-								<button className="btn btn-nav"><i className="fa-solid fa-user-astronaut me-2"></i>LogIn</button>
+								<button className="btn btn-yellow"><i className="fa-solid fa-user-astronaut me-2"></i>LogIn</button>
 							</Link>
 						</li>
 						<li className="nav-item ms-2 mb-2" /* hidden={store.buttons_admin_tech.login}*/>
 							<Link to="/signin" className="text-decoration-none" >
-								<button className="btn btn-nav"><i className="fa-solid fa-meteor me-2"></i>SignIn</button>
+								<button className="btn btn-yellow"><i className="fa-solid fa-meteor me-2"></i>SignIn</button>
 							</Link>
 						</li>
 						<li className="nav-item ms-2" /* hidden={store.buttons_admin_tech.account} */>
 							<Link to="/" className="text-decoration-none" >
-								<button className="btn btn-nav" onClick={() => actions.logout()}><i class="fa-solid fa-rocket me-2"></i>LogOut</button>
+								<button className="btn btn-yellow" onClick={() => actions.logout()}><i class="fa-solid fa-rocket me-2"></i>LogOut</button>
 							</Link>
 						</li>
 					</ul>

@@ -22,7 +22,7 @@ const ForgetPass = () => {
                     <label className='text-warning' for="floatingInput">Email address</label>
                 </div>
                 <div className='text-center mb-2'>
-                    <button className="btn btn-warning" type="submit" onClick={() => {
+                    <button className="btn btn-yellow" type="submit" onClick={() => {
                         Swal.fire({
                             title: "Welcome Back",
                             timer: 2000,
