@@ -19,11 +19,18 @@ body{
 .nav-link {
     color: 	#FFC107;
     &:hover {
-      color: #2225be;
-      -webkit-transform: translateY(-0.25em);
-      transform: translateY(-0.25em);
+        color: #2225be;
+        -webkit-transform: translateY(-0.25em);
+        transform: translateY(-0.25em);
     }
-  }
+}
+.modal-content{
+    background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,1)), url("https://w0.peakpx.com/wallpaper/365/498/HD-wallpaper-star-wars-black-amoled.jpg");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: center;  
+    
+}
   
 .nav-span{
     font-size: 1.3rem;
@@ -55,6 +62,22 @@ body{
         transform: translateY(0.25em);
     }
 }
+.input-modal{
+    background: transparent;
+    border: none;
+    border-bottom: 0.6px solid white;
+    border-top: 0.2px solid grey;
+    color: white;
+
+    &:focus{
+        background: transparent;
+        color: white;
+    }
+    &:read-only{
+        background: transparent;
+        color: #FFC107
+    }
+  }
 .text-yellow{
     color: #FFC107;
     

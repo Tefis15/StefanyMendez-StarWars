@@ -24,7 +24,7 @@
   &:focus{
     background: transparent;
     color: white;
-}
+  }
 }
 .fa-eye, .fa-eye-slash{
   position: absolute;

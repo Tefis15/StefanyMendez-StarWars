@@ -9,6 +9,7 @@ const Vehicles = () => {
 	const navigate = useNavigate()
 
 	return (
+		<>
 		<div className='container mt-4'>
 			<div className='text-end mb-3'>
 				<button className='btn btn-yellow'>
@@ -29,6 +30,8 @@ const Vehicles = () => {
 				<CardVehicles />
 			</div>
 		</div>
+		
+		</>
 	)
 }
 export default Vehicles
