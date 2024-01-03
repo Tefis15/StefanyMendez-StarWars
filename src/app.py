@@ -209,7 +209,7 @@ def add_user():
         "User": user.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route('/admin/user', methods=['POST'])
 @jwt_required()
@@ -271,7 +271,7 @@ def add_user_admin():
         "User": user.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route('/admin/user/<int:user_id>', methods=['PUT'])
 @jwt_required() 
@@ -322,7 +322,7 @@ def edit_user(user_id):
         "User": user.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route('/user/<string:user_email>', methods=['PUT'])
 def edit_user_password(user_email):
@@ -346,7 +346,7 @@ def edit_user_password(user_email):
         "User": user.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route('/user/<int:user_id>', methods=['DELETE'])
 @jwt_required()
@@ -385,7 +385,7 @@ def delete_user(user_id):
         "msg": "ok"
     }
     
-    return jsonify(response_body)
+    return jsonify(response_body), 200
     
 # <------------------------------People------------------------------>
 @app.route('/people', methods=['GET'])
@@ -403,8 +403,8 @@ def get_people():
        "total_records": len(sorted_people),
        "Results": sorted_people
     }
-   
-    return jsonify(response_body, 200)
+
+    return jsonify(response_body), 200
     
 @app.route('/people/<int:people_uid>', methods=['GET'])
 def get_people_by_uid(people_uid):
@@ -418,7 +418,7 @@ def get_people_by_uid(people_uid):
         "People": people.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
         
 @app.route('/people', methods=['POST'])
 @jwt_required()
@@ -461,7 +461,7 @@ def add_people():
         "People": people.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/people/<int:people_uid>", methods=['PUT'])
 @jwt_required()
@@ -497,7 +497,7 @@ def edit_people(people_uid):
         "People":people.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
       
 @app.route("/people/<int:people_uid>", methods=['DELETE'])
 @jwt_required()
@@ -536,7 +536,7 @@ def delete_people(people_uid):
         "msg": "ok"
     }
     
-    return jsonify(response_body)
+    return jsonify(response_body), 200
     
 # <------------------------------PeopleDetails------------------------------>
 @app.route("/people/details/<int:people_uid>", methods=['GET'])
@@ -551,7 +551,7 @@ def get_details_people(people_uid):
         "result": people_details.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route("/people/details", methods=['POST'])
 @jwt_required()
@@ -609,10 +609,10 @@ def add_details_people():
     
     response_body = {
         "msg":"ok",
-        "People Details": people_details.serialize()
+        "People_details": people_details.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/people/details/<int:people_uid>", methods=['PUT'])
 @jwt_required()
@@ -631,13 +631,7 @@ def edit_details_people(people_uid):
     
     if request_body is None or not request_body:
         raise APIException("You must send information", status_code=404)
-    
-    planet_exists = Planets.query.filter_by(uid=request_body['planet_uid']).first()
-    
-    if planet_exists is None:
-        raise APIException("The planet not exist", status_code=404)
-    
-        
+
     if "height" in request_body and request_body["height"] != "":
         people_details.height = request_body['height']
         
@@ -657,6 +651,10 @@ def edit_details_people(people_uid):
         people_details.gender = request_body['gender']
         
     if "planet_uid" in request_body and request_body["planet_uid"] != "":
+        planet_exists = Planets.query.filter_by(uid=request_body['planet_uid']).first()
+        if planet_exists is None:
+            raise APIException("The planet not exist", status_code=404)
+        
         people_details.planet_uid = request_body['planet_uid']
         
     if "description" in request_body and request_body["description"] != "":
@@ -678,10 +676,10 @@ def edit_details_people(people_uid):
     
     response_body = {
         "msg":"ok",
-        "People Details": people_details.serialize()
+        "People_details": people_details.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/people/details/<int:people_uid>", methods=['DELETE'])
 @jwt_required()
@@ -703,7 +701,7 @@ def delete_people_details(people_uid):
         "msg":"ok",  
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 # <------------------------------PeopleFavorites------------------------------>
 @app.route("/people/favorites/<int:user_id>", methods=['GET'])
@@ -726,7 +724,7 @@ def get_people_favorites(user_id):
         "Results":favorites
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route("/people/favorites", methods=['POST'])
 @jwt_required()
@@ -774,7 +772,7 @@ def add_people_favorites():
         "People Favorites": people_favorites.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
    
 @app.route("/people/favorites/<int:user_id>", methods=['DELETE'])
 @jwt_required()
@@ -809,7 +807,7 @@ def delete_people_favorites(user_id):
         "msg": "ok"
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
      
     
 # <------------------------------Planets------------------------------>
@@ -829,7 +827,7 @@ def get_planets():
        "Results": sorted_planets
     }
    
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route('/planets/<int:planets_uid>', methods=['GET'])
 def get_planets_by_uid(planets_uid):
@@ -843,7 +841,7 @@ def get_planets_by_uid(planets_uid):
         "Planet": planets.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
         
 @app.route('/planets', methods=['POST'])
 @jwt_required()
@@ -886,7 +884,7 @@ def add_planets():
         "Planets": planets.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/planets/<int:planets_uid>", methods=['PUT'])
 @jwt_required()
@@ -922,7 +920,7 @@ def edit_planets(planets_uid):
         "Planets":planets.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/planets/<int:planets_uid>", methods=['DELETE'])
 @jwt_required()
@@ -969,7 +967,7 @@ def get_details_planets(planets_uid):
         "result": planets_details.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route("/planets/details", methods=['POST'])
 @jwt_required()
@@ -1026,7 +1024,7 @@ def add_details_planets():
         "Planets Details": planets_details.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/planets/details/<int:planets_uid>", methods=['PUT'])
 @jwt_required()
@@ -1091,7 +1089,7 @@ def edit_details_planets(planets_uid):
         "Planets Details": planets_details.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/planets/details/<int:planets_uid>", methods=['DELETE'])
 @jwt_required()
@@ -1113,7 +1111,7 @@ def delete_planets_details(planets_uid):
         "msg":"ok",  
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 # <------------------------------PlanetsFavorites------------------------------>
 @app.route("/planets/favorites/<int:user_id>", methods=['GET'])
@@ -1136,7 +1134,7 @@ def get_planets_favorites(user_id):
         "Results":favorites
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route("/planets/favorites", methods=['POST'])
 @jwt_required()
@@ -1184,7 +1182,7 @@ def add_planets_favorites():
         "Planets Favorites": planets_favorites.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
    
 @app.route("/planets/favorites/<int:user_id>", methods=['DELETE'])
 @jwt_required()
@@ -1219,7 +1217,7 @@ def delete_planets_favorites(user_id):
         "msg": "ok"
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
      
 
 # <------------------------------Vehicles------------------------------>
@@ -1239,7 +1237,7 @@ def get_vehicles():
        "Results": sorted_vehicles
     }
    
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route('/vehicles/<int:vehicles_uid>', methods=['GET'])
 def get_vehicles_by_uid(vehicles_uid):
@@ -1253,7 +1251,7 @@ def get_vehicles_by_uid(vehicles_uid):
         "Vehicle": vehicles.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
         
 @app.route('/vehicles', methods=['POST'])
 @jwt_required()
@@ -1296,7 +1294,7 @@ def add_vehicles():
         "Vehicles": vehicles.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/vehicles/<int:vehicles_uid>", methods=['PUT'])
 @jwt_required()
@@ -1332,7 +1330,7 @@ def edit_vehicles(vehicles_uid):
         "Vehicles":vehicles.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/vehicles/<int:vehicles_uid>", methods=['DELETE'])
 @jwt_required()
@@ -1364,7 +1362,7 @@ def delete_vehicles(vehicles_uid):
         "msg": "ok"
     }
     
-    return jsonify(response_body)
+    return jsonify(response_body), 200
 
 # <------------------------------VehiclesDetails------------------------------>
 @app.route("/vehicles/details/<int:vehicles_uid>", methods=['GET'])
@@ -1385,7 +1383,7 @@ def get_details_vehicles(vehicles_uid):
         "Pilots": vehicles
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route("/vehicles/details", methods=['POST'])
 @jwt_required()
@@ -1444,7 +1442,7 @@ def add_details_vehicles():
         "Vehicles Details": vehicles_details.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/vehicles/details/<int:vehicles_uid>", methods=['PUT'])
 @jwt_required()
@@ -1515,7 +1513,7 @@ def edit_details_vehicles(vehicles_uid):
         "Vehicles Details": vehicles_details.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/vehicles/details/<int:vehicles_uid>", methods=['DELETE'])
 @jwt_required()
@@ -1537,7 +1535,7 @@ def delete_vehicles_details(vehicles_uid):
         "msg":"ok",  
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 # <------------------------------VehiclesFavorites------------------------------>
 @app.route("/vehicles/favorites/<int:user_id>", methods=['GET'])
@@ -1560,7 +1558,7 @@ def get_vehicles_favorites(user_id):
         "Results":favorites
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route("/vehicles/favorites", methods=['POST'])
 @jwt_required()
@@ -1608,7 +1606,7 @@ def add_vehicles_favorites():
         "Vehicles Favorites": vehicles_favorites.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
    
 @app.route("/vehicles/favorites/<int:user_id>", methods=['DELETE'])
 @jwt_required()
@@ -1643,7 +1641,7 @@ def delete_vehicles_favorites(user_id):
         "msg": "ok"
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
      
 # <------------------------------VehiclesPeople------------------------------>
 @app.route("/vehicles/people", methods=['POST'])
@@ -1692,7 +1690,7 @@ def add_vehicles_people():
         "Vehicles People": vehicles_people.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route("/vehicles/people", methods=['DELETE'])
 @jwt_required()
@@ -1734,7 +1732,7 @@ def delete_vehicles_people():
         "msg": "ok"
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 # <------------------------------Starships------------------------------>
 @app.route("/starships", methods=['GET'])
@@ -1753,7 +1751,7 @@ def get_starships():
        "Results": sorted_starships
     }
    
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route('/starships/<int:starships_uid>', methods=['GET'])
 def get_starships_by_uid(starships_uid):
@@ -1767,7 +1765,7 @@ def get_starships_by_uid(starships_uid):
         "Vehicle": starships.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
         
 @app.route('/starships', methods=['POST'])
 @jwt_required()
@@ -1810,7 +1808,7 @@ def add_starships():
         "Starships": starships.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/starships/<int:starships_uid>", methods=['PUT'])
 @jwt_required()
@@ -1846,7 +1844,7 @@ def edit_starships(starships_uid):
         "Starships":starships.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/starships/<int:starships_uid>", methods=['DELETE'])
 @jwt_required()
@@ -1877,7 +1875,7 @@ def delete_starships(starships_uid):
         "msg": "ok"
     }
     
-    return jsonify(response_body)
+    return jsonify(response_body), 200
 
 # <------------------------------StarshipsDetails------------------------------>
 @app.route("/starships/details/<int:starships_uid>", methods=['GET'])
@@ -1898,7 +1896,7 @@ def get_details_starships(starships_uid):
         "Pilots": starships
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route("/starships/details", methods=['POST'])
 @jwt_required()
@@ -1959,7 +1957,7 @@ def add_details_starships():
         "Starships Details": starships_details.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/starships/details/<int:starships_uid>", methods=['PUT'])
 @jwt_required()
@@ -2036,7 +2034,7 @@ def edit_details_starships(starships_uid):
         "Starships Details": starships_details.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 @app.route("/starships/details/<int:starships_uid>", methods=['DELETE'])
 @jwt_required()
@@ -2058,7 +2056,7 @@ def delete_starships_details(starships_uid):
         "msg":"ok",  
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 # <------------------------------StarshipsFavorites------------------------------>
 @app.route("/starships/favorites/<int:user_id>", methods=['GET'])
@@ -2081,7 +2079,7 @@ def get_starships_favorites(user_id):
         "Results":favorites
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route("/starships/favorites", methods=['POST'])
 @jwt_required()
@@ -2129,7 +2127,7 @@ def add_starships_favorites():
         "Starships Favorites": starships_favorites.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
    
 @app.route("/starships/favorites/<int:user_id>", methods=['DELETE'])
 @jwt_required()
@@ -2164,7 +2162,7 @@ def delete_starships_favorites(user_id):
         "msg": "ok"
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
      
 # <------------------------------StarshipsPeople------------------------------>
 @app.route("/starships/people", methods=['POST'])
@@ -2213,7 +2211,7 @@ def add_starships_people():
         "Starships Favorites": starships_people.serialize()
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
 
 @app.route("/starships/people", methods=['DELETE'])
 @jwt_required()
@@ -2255,7 +2253,7 @@ def delete_starships_people():
         "msg": "ok"
     }
     
-    return jsonify(response_body, 200)
+    return jsonify(response_body), 200
     
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':

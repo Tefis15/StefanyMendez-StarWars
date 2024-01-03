@@ -431,11 +431,11 @@ class PeopleDetails(db.Model):
                         "homeworld": self.homeworld.serialize(),
                         "name": self.people.name,
                          "url": self.people.url
-            },
-            "uid": self.people.uid,  
-            "id": self.id, 
-            "description": self.description
-        } 
+                },
+                "uid": self.people.uid,  
+                "id": self.id, 
+                "description": self.description
+            } 
         
     def save(self):
         db.session.add(self)

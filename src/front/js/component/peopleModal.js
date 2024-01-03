@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Context } from '../store/appContext'
 import PropTypes from "prop-types";
 
@@ -8,7 +8,12 @@ export const PeopleModal = (...props) => {
 
     return (
 
-        <form className='modal' tabIndex="-1" style={{ display: store.showModal ? "inline-block" : "none" }}>
+        <form className='modal' tabIndex="-1" style={{ display: store.showModal ? "inline-block" : "none" }} 
+        onSubmit={e => {
+                e.preventDefault()
+                actions.addPeople()
+                e.target.reset()
+        }}>
             <div className="modal-dialog modal-dialog-centered p-1">
                 <div className="modal-content usersModalContent p-2">
                     <div className="modal-header">
@@ -21,12 +26,14 @@ export const PeopleModal = (...props) => {
                     <div className="modal-body">
                         <div className="form-floating mb-3">
                             <input
-                                type="text"
+                                type="number"
                                 className="form-control input-modal"
-                                id="peopleUid"
-                                name='peopleUid'
-                                placeholder='People Uid' />
-                            <label className='text-warning' for="floatingInput">People Uid</label>
+                                id="uid"
+                                name='uid'
+                                onChange={actions.handleChange}
+                                placeholder='People Uid'
+                            />
+                            <label className='text-warning' htmlFor="floatingInput">People Uid</label>
                         </div>
                         <div className="form-floating mb-3">
                             <input
@@ -34,104 +41,26 @@ export const PeopleModal = (...props) => {
                                 className="form-control input-modal"
                                 id="name"
                                 name='name'
-                                placeholder='Name' />
-                            <label className='text-warning' for="floatingInput">Name</label>
+                                placeholder='Name'
+                                onChange={actions.handleChange}
+                            />
+                            <label className='text-warning' htmlFor="floatingInput">Name</label>
                         </div>
                         <div className="form-floating mb-3">
                             <input
                                 type="text"
                                 className="form-control input-modal"
-                                id="description"
-                                name='description'
-                                placeholder='Description' />
-                            <label className='text-warning' for="floatingInput">Description</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="text"
-                                className="form-control input-modal"
-                                id="height"
-                                name='height'
-                                placeholder='Height' />
-                            <label className='text-warning' for="floatingInput">Height</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="text"
-                                className="form-control input-modal"
-                                id="mass"
-                                name='mass'
-                                placeholder='Mass' />
-                            <label className='text-warning' for="floatingInput">Mass</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="text"
-                                className="form-control input-modal"
-                                id="skinColor"
-                                name='skinColor'
-                                placeholder='Skin Color' />
-                            <label className='text-warning' for="floatingInput">Skin Color</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="text"
-                                className="form-control input-modal"
-                                id="eyeColor"
-                                name='eyeColor'
-                                placeholder='Eye Color' />
-                            <label className='text-warning' for="floatingInput">Eye Color</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="text"
-                                className="form-control input-modal"
-                                id="birthYear"
-                                name='birthYear'
-                                placeholder='Birth Year' />
-                            <label className='text-warning' for="floatingInput">Birth Year</label>
-                        </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="text"
-                                className="form-control input-modal"
-                                id="gender"
-                                name='gender'
-                                placeholder='Gender' />
-                            <label className='text-warning' for="floatingInput">Gender</label>
-                        </div>
-                        <div className="form-group mb-2">
-                            <label htmlFor="role" className="modal-label-input">Homeworld</label>
-                            <div className="input-group group-user-modal mb-3 input-select">
-                                <select className="form-select select-user-modal" id="inputGroupRoles" onChange={actions.handle_change} name='role'>
-                                    <option className='option-user-modal' defaultValue="null">Select the planet</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="text"
-                                className="form-control input-modal"
-                                id="created"
-                                name='created'
-                                placeholder='Created Date'
+                                id="url"
+                                name='url'
+                                placeholder='URL'
+                                value={`https://www.swapi.tech/api/people/${store.uid}`}
+                                onChange={actions.handleChange}
                                 readOnly
-                                />
-                            <label className='text-warning' for="floatingInput">Created Date</label>
+                            />
+                            <label className='text-warning' htmlFor="floatingInput"></label>
                         </div>
-                        <div className="form-floating mb-3">
-                            <input
-                                type="text"
-                                className="form-control input-modal"
-                                id="edited"
-                                name='edited'
-                                placeholder='Edited Date'
-                                readOnly />
-                            <label className='text-warning' for="floatingInput">Edited Date</label>
-                        </div>
-                        
                     </div>
-                    <div className="modal-footer d-flex justify-content-center aligh-items-center">
+                    <div className="modal-footer d-flex justify-content-center align-items-center">
                         <button type="submit" className="btn btn-yellow fw-bold text-center">
                             Save
                         </button>
