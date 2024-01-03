@@ -16,7 +16,7 @@ export const CardVehicles = ({ vehicle }, ...props) => {
     return (
         <div className="">
             <div className="card card-vehicles h-100">
-                <img src={`https://starwars-visualguide.com/assets/img/vehicles/6.jpg`} className="card-img-top img-card-vehicles " alt="..."
+                <img src={`https://starwars-visualguide.com/assets/img/vehicles/6.jpg`} className="card-img-top img-card-vehicles h-100" alt="..."
                     onError={({ currentTarget }) => {
                         currentTarget.onerror = null;
                         currentTarget.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg";
@@ -51,4 +51,3 @@ export const CardVehicles = ({ vehicle }, ...props) => {
 CardVehicles.propTypes = {
     vehicle: PropTypes.object
 }
-export default CardVehicles

@@ -4,6 +4,7 @@
     backdrop-filter: blur(8px);
     border-radius: 1rem;
     box-shadow: 5px 5px 10px 1px #000000;
+
 }
 .img-card-people{
     border-radius: 1rem;
@@ -18,4 +19,12 @@
     padding: 2rem;
     color: white;
     text-align: justify;
+}
+.input-select, .select-modal{
+    background-color: transparent;
+    color: white;
+}
+.option-modal{
+    background-color: #FFC107;
+    color: #000000;
 }

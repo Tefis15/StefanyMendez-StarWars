@@ -4,6 +4,8 @@
     backdrop-filter: blur(8px);
     border-radius: 1rem;
     box-shadow: 5px 5px 10px 1px #000000;
+    height: 20rem;
+    width: 15rem;
 }
 .img-card-planets{
     border-radius: 1rem;

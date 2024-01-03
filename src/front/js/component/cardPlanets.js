@@ -16,7 +16,7 @@ export const CardPlanets = ({ planet }, ...props) => {
     return (
         <div className="">
             <div className="card card-planets h-100">
-                <img src={`https://starwars-visualguide.com/assets/img/planets/6.jpg`} className="card-img-top img-card-planets " alt="..."
+                <img src={`https://starwars-visualguide.com/assets/img/planets/6.jpg`} className="card-img-top img-card-planets h-100" alt="..."
                     onError={({ currentTarget }) => {
                         currentTarget.onerror = null;
                         currentTarget.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg";
@@ -51,4 +51,3 @@ export const CardPlanets = ({ planet }, ...props) => {
 CardPlanets.propTypes = {
     planet: PropTypes.object
 }
-export default CardPlanets

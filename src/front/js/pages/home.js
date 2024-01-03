@@ -28,11 +28,11 @@ export const Home = () => {
 							<PhrasesHome author={"Obi-One Kenobi"} phrase={"Your eyes can deceive you, do not trust them."} uid={10} />
 						</div>
 						<button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="prev">
-							<i class="fa-solid fa-angles-left fs-1 text-warning" aria-hidden="true"></i>
+							<i className="fa-solid fa-angles-left fs-1 text-warning" aria-hidden="true"></i>
 							<span className="visually-hidden">Previous</span>
 						</button>
 						<button className="carousel-control-next" type="button" data-bs-target="#carouselExampleFade" data-bs-slide="next">
-							<i class="fa-solid fa-angles-right fs-1 text-warning" aria-hidden="true"></i>
+							<i className="fa-solid fa-angles-right fs-1 text-warning" aria-hidden="true"></i>
 							<span className="visually-hidden">Next</span>
 						</button>
 					</div>
@@ -69,11 +69,11 @@ export const Home = () => {
 							
 						</div>
 						<button className="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-							<i class="fa-solid fa-angles-left fs-1 text-warning" aria-hidden="true"></i>
+							<i className="fa-solid fa-angles-left fs-1 text-warning" aria-hidden="true"></i>
 							<span className="visually-hidden">Previous</span>
 						</button>
 						<button className="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-							<i class="fa-solid fa-angles-right fs-1 text-warning" aria-hidden="true"></i>
+							<i className="fa-solid fa-angles-right fs-1 text-warning" aria-hidden="true"></i>
 							<span className="visually-hidden">Next</span>
 						</button>
 					</div>

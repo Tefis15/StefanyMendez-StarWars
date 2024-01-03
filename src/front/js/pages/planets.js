@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import '../../styles/planets.css'
 import { Link, useNavigate } from 'react-router-dom'
 import { Context } from '../store/appContext'
-import CardPlanets from '../component/cardPlanets'
+import {CardPlanets} from '../component/cardPlanets'
 
-const Planets = () => {
+export const Planets = () => {
 	const { store, actions } = useContext(Context);
 	const navigate = useNavigate()
 
@@ -17,7 +17,7 @@ const Planets = () => {
 					</Link>
 				</button>
 			</div>
-			<div className="row row-cols-1 row-cols-md-4 rows-cols-sm-1 rows-cols-lg-6 g-4">
+			<div className="row row-cols-1 row-cols-lg-5 row-cols-md-4 row-cols-sm-1 rows-cols-lg-5 g-3">
 				<CardPlanets />
 				<CardPlanets />
 				<CardPlanets />
@@ -31,4 +31,3 @@ const Planets = () => {
 		</div>
 	)
 }
-export default Planets
