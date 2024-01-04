@@ -10,7 +10,6 @@ import { PeopleDetailsModal } from "./peopleDetailsModal";
 export const CardPeople = ({ character }, ...props) => {
     const { store, actions } = useContext(Context);
 
-
     return (
         <>
             <div className="">

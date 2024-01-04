@@ -768,9 +768,9 @@ def add_people_favorites():
     
     return jsonify(response_body), 200
    
-@app.route("/people/favorites/<int:people_uid>", methods=['DELETE'])
+@app.route("/people/favorites", methods=['DELETE'])
 @jwt_required()
-def delete_people_favorites(people_uid):
+def delete_people_favorites():
     request_body = request.get_json(force=True, silent=True)
     
     user_login = get_jwt_identity()
@@ -1172,7 +1172,7 @@ def add_planets_favorites():
     
     return jsonify(response_body), 200
    
-@app.route("/planets/favorites/<int:planets_uid>", methods=['DELETE'])
+@app.route("/planets/favorites", methods=['DELETE'])
 @jwt_required()
 def delete_planets_favorites():
     request_body = request.get_json(force=True, silent=True)

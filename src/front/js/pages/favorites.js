@@ -17,7 +17,7 @@ export const Favorites = () => {
        actions.getVehiclesFavorites()
        actions.getStarshipsFavorites()
 
-	}, [store.deleted, store.favorites])
+	}, [store.deleted])
 
 	return (
 		<>
