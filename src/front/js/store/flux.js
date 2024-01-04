@@ -7,6 +7,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			showModal: false,
 			showModalDetails: false,
 			deleted: false,
+			favoritesPeople: [],
+			favoritesPlanets: [],
+			favoritesVehicles: [],
+			favoritesStarships: [],
 
 			userLogin: JSON.parse(localStorage.getItem("userLogin")) == undefined ? {} : JSON.parse(localStorage.getItem("userLogin")),
 			isLoggedIn: JSON.parse(localStorage.getItem("isLoggedIn")) == undefined ? false : JSON.parse(localStorage.getItem("isLoggedIn")),
@@ -33,7 +37,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			birthYear: null,
 			gender: null,
 			homeworld: null,
-			peopleFavorites: [],
 
 			planets: [],
 			diameter: null,
@@ -44,7 +47,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			climate: null,
 			terrain: null,
 			surfaceWater: null,
-			planetsFavorites: [],
+
 
 			model: null,
 			class: null,
@@ -56,11 +59,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			maxAtmospheringSpeed: null,
 			cargoCapacity: null,
 			consumables: null,
-			vehiclesFavorites: [],
+
 
 			hyperdrive: null,
 			mglt: null,
-			starshipsFavorites: [],
 
 		},
 		actions: {
@@ -118,6 +120,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							setStore({ isLoggedIn: true })
 							actions.clearStore()
 							setTimeout(actions.logOut, 600000)
+
 						} else {
 							Swal.fire({
 								icon: 'error',
@@ -146,6 +149,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 			logOut: () => {
 				setStore({ isLoggedIn: false })
 				setStore({ userLogin: {} })
+				setStore({ favoritesPeople: [] })
+				setStore({ favoritesPlanets: [] })
+				setStore({ favoritesVehicles: [] })
+				setStore({ favoritesStarships: [] })
 				localStorage.clear();
 			},
 
@@ -167,7 +174,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						method: 'GET'
 					})
 					const result = await response.json()
-					setStore({ character: result.result })
+					setStore({ character: result.Results })
 					if (type === "details") {
 						if (result.msg != "ok") {
 							setStore({ character: null })
@@ -300,40 +307,44 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			},
 			deletePeople: async (uid, name) => {
-				const token = localStorage.getItem('jwt-token')
+				try {
+					const token = localStorage.getItem('jwt-token')
 
-				const response = await fetch(process.env.BACKEND_URL + `/people/${uid}`, {
-					method: 'DELETE',
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': 'Bearer ' + token
-					}
-				})
+					const response = await fetch(process.env.BACKEND_URL + `/people/${uid}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
 
-				const result = await response.json()
-
-				if (result.msg == "ok") {
-					setStore({ deleted: true})
-					Swal.fire({
-						title: 'Deleted!',
-						text: `The character ${name} was deleted`,
-						icon: 'success',
-						showConfirmButton: false,
-						color: '#FFFFFF',
-						background: `#000000
-							url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
-							no-repeat`,
-						timer: 3000,
-						backdrop: `
+					const result = await response.json()
+					console.log(result);
+					if (result.msg == "ok") {
+						setStore({ deleted: true })
+						Swal.fire({
+							title: 'Deleted!',
+							text: `The character ${name} was deleted`,
+							icon: 'success',
+							showConfirmButton: false,
+							color: '#FFFFFF',
+							background: `#000000
+						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+						no-repeat`,
+							timer: 3000,
+							backdrop: `
 						rgba(0,0,123,0.4)
 						url("https://i.pinimg.com/originals/96/ea/bc/96eabc812b02070e025cb41776b91803.gif")
 						right top 
 						no-repeat
 						`
-					})
-				}
-				else {
-					actions.showSwalError(result.message)
+						})
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+				} catch (error) {
+					console.log(error + " Error in deletePeople")
 				}
 
 			},
@@ -409,80 +420,232 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 			editPeopleDetails: async (uid) => {
-				const store = getStore()
-				const actions = getActions()
-				const token = localStorage.getItem('jwt-token')
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
 
-				let peopleDetails = {}
+					let peopleDetails = {}
 
-				if (store.description != null) {
-					peopleDetails.description = store.description
-				}
-				if (store.height != null) {
-					peopleDetails.height = store.height
-				}
-				if (store.mass != null) {
-					peopleDetails.mass = store.mass
-				}
-				if (store.skinColor != null) {
-					peopleDetails.skin_color = store.skinColor
-				}
-				if (store.eyeColor != null) {
-					peopleDetails.eye_color = store.eyeColor
-				}
-				if (store.birthYear != null) {
-					peopleDetails.birth_year = store.birthYear
-				}
-				if (store.gender != null) {
-					peopleDetails.gender = store.gender
-				}
-				if (store.homeworld != null) {
-					peopleDetails.planet_uid = store.homeworld
-				}
-
-				const response = await fetch(process.env.BACKEND_URL + `/people/details/${uid}`, {
-					method: 'PUT',
-					body: JSON.stringify(peopleDetails),
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': 'Bearer ' + token
+					if (store.description != null) {
+						peopleDetails.description = store.description
 					}
-				})
-				const result = await response.json()
-				if (result.msg == "ok") {
-					actions.handleDeleteModalDetails()
-					Swal.fire({
-						title: "Do it!!!",
-						text: `${result.People_details.uid} - ${result.People_details.properties.name} details was successfully edited`,
-						timer: 3000,
-						padding: "2em",
-						color: "#FFC107",
-						showConfirmButton: false,
-						background: `#000000
+					if (store.height != null) {
+						peopleDetails.height = store.height
+					}
+					if (store.mass != null) {
+						peopleDetails.mass = store.mass
+					}
+					if (store.skinColor != null) {
+						peopleDetails.skin_color = store.skinColor
+					}
+					if (store.eyeColor != null) {
+						peopleDetails.eye_color = store.eyeColor
+					}
+					if (store.birthYear != null) {
+						peopleDetails.birth_year = store.birthYear
+					}
+					if (store.gender != null) {
+						peopleDetails.gender = store.gender
+					}
+					if (store.homeworld != null) {
+						peopleDetails.planet_uid = store.homeworld
+					}
+
+					const response = await fetch(process.env.BACKEND_URL + `/people/details/${uid}`, {
+						method: 'PUT',
+						body: JSON.stringify(peopleDetails),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.handleDeleteModalDetails()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.People_details.uid} - ${result.People_details.properties.name} details was successfully edited`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
 								url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
 								no-repeat`,
-						backdrop: `rgba(0,0,123,0.4)
+							backdrop: `rgba(0,0,123,0.4)
 								url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
 								right top 
 								no-repeat`
-					})
-				} else if (store.name != null) {
-					actions.editPeople(uid)
-				}
-				else {
-					actions.showSwalError(result.message)
+						})
+					} else if (store.name != null) {
+						actions.editPeople(uid)
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+				} catch (error) {
+					console.log(error + " Error in editPeopleDetails")
 				}
 			},
-			getPeopleFavorites: async (uid) => {
-				const token = localStorage.getItem('jwt-token')
+			getPeopleFavorites: async () => {
 
-				const response = await fetch (process.env.BACKEND_URL + `/people/favorites/${uid}`, {
-					method: 'GET',
-					headers: {
-						'Content-Type': 'application/json',
-						'Authorization': 'Bearer ' + token
+				try {
+					const token = localStorage.getItem('jwt-token')
+
+					const response = await fetch(process.env.BACKEND_URL + `/people/favorites`, {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						setStore({ favoritesPeople: result.Results })
+					} else {
+						setStore({ favoritesPeople: [] })
 					}
-				})
+					
+				} catch (error) {
+					console.log(error + " Error in getPeopleFavorites")
+				}
+			},
+			addFavoritesPeople: async (uid) => {
+				try {
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let favorite = {}
+
+					favorite.people_uid = uid
+
+					const response = await fetch(process.env.BACKEND_URL + '/people/favorites', {
+						method: 'POST',
+						body: JSON.stringify(favorite),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.getPeopleFavorites()
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in getPeopleFavorites")
+				}
+
+			},
+			deleteFavoritesPeople: async (uid) => {
+				try {
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let favorite = {}
+
+					favorite.people_uid = uid
+
+					const response = await fetch(process.env.BACKEND_URL + `/people/favorites/${uid}`, {
+						method: 'DELETE',
+						body: JSON.stringify(favorite),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.getPeopleFavorites()
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in getPeopleFavorites")
+				}
+
+			},
+
+			getPlanetsFavorites: async () => {
+
+				try {
+					const token = localStorage.getItem('jwt-token')
+
+					const response = await fetch(process.env.BACKEND_URL + `/planets/favorites`, {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						setStore({ favoritesPlanets: result.Results })
+					} else {
+						setStore({ favoritesPlanets: [] })
+					}
+
+				} catch (error) {
+					console.log(error + " Error in getPeopleFavorites")
+				}
+			},
+			getVehiclesFavorites: async () => {
+
+				try {
+					const token = localStorage.getItem('jwt-token')
+
+					const response = await fetch(process.env.BACKEND_URL + `/vehicles/favorites`, {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						setStore({ favoritesVehicles: result.Results })
+					} else {
+						setStore({ favoritesVehicles: [] })
+					}
+
+				} catch (error) {
+					console.log(error + " Error in getPeopleFavorites")
+				}
+			},
+			getStarshipsFavorites: async () => {
+				
+				try {
+					const token = localStorage.getItem('jwt-token')
+					
+					const response = await fetch(process.env.BACKEND_URL + `/starships/favorites`, {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						setStore({ favoritesStarships: result.Results })
+					} else {
+						setStore({ favoritesStarships: [] })
+					}
+
+				} catch (error) {
+					console.log(error + " Error in getPeopleFavorites")
+				}
 			},
 
 			getAllPlanets: async () => {
@@ -549,7 +712,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
 						no-repeat`,
 					backdrop: `rgba(0,0,123,0.4)
-						url("https://media2.giphy.com/media/jq0BlOhhKKv8tO9oOz/giphy.gif?cid=6c09b952u3u8dsur3de499ls2qzc1i2hzuummvnuay3h7a5j&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s")
+						url("https://media2.giphy.com/media/QC0iYuIqKccSoLW0Bf/200.gif?cid=95b27944solsgq6e6y3ixpq7t2w3f6jdgizt5fodhuqjmha0&ep=v1_gifs_gifId&rid=200.gif&ct=s")
 						right top 
 						no-repeat`
 				})

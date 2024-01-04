@@ -38,13 +38,13 @@ export const Navbar = () => {
 							</Link>
 						</li>
 						<li className="nav-link nav-item nav-menu ms-3"
-						 hidden={store.isLoggedIn ? false : true}>
-							<Link to="/Favorites" className="nav-link text-decoration-none position-relative"
-								id="dropdownMenuButton1" data-bs-auto-close="outside" data-bs-toggle="dropdown" aria-expanded="false">
+							hidden={store.isLoggedIn ? false : true}>
+							<Link to="/favorites" className="nav-link text-decoration-none position-relative"
+								id="dropdownMenuButton1" data-bs-auto-close="outside" aria-expanded="false">
 								<span className="nav-span">Favorites</span>
-								<span className="position-absolute top-25 ms-2 start-100 translate-middle badge rounded-pill bg-danger"
-								/* hidden={store.favorites.length == 0 ? true : false} */>
-									{/* {store.favorites.length} */} 2
+								<span className="position-absolute top-25 ms-2 start-100 translate-middle badge rounded-pill bg-danger ">
+									{store.isLoggedIn ? store.favoritesPeople.length + store.favoritesPlanets.length
+										+ store.favoritesVehicles.length + store.favoritesStarships.length : 0}
 									<span className="visually-hidden">Not Favorites</span>
 								</span>
 							</Link>

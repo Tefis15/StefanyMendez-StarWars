@@ -548,7 +548,7 @@ def get_details_people(people_uid):
     
     response_body = {
         "msg":"ok",
-        "result": people_details.serialize()
+        "Results": people_details.serialize()
     }
     
     return jsonify(response_body), 200
@@ -704,20 +704,21 @@ def delete_people_details(people_uid):
     return jsonify(response_body), 200
 
 # <------------------------------PeopleFavorites------------------------------>
-@app.route("/people/favorites/<int:user_id>", methods=['GET'])
+@app.route("/people/favorites", methods=['GET'])
 @jwt_required()
-def get_people_favorites(user_id):
-    people_favorites = PeopleFavorites.query.filter_by(user_id=user_id)
-    favorites = list(map(lambda favorite: favorite.serialize(), people_favorites))
+def get_people_favorites():
     
     user_login = get_jwt_identity()
     current_user = User.query.filter_by(email=user_login).first()
     
-    if people_favorites is None:
-        raise APIException("People¨favorites not found", status_code=404)
+    people_favorites = PeopleFavorites.query.filter_by(user_id=current_user.id)
+    favorites = list(map(lambda favorite: favorite.serialize(), people_favorites))
     
     if current_user is None:
         raise APIException("Access denied", status_code=403)
+
+    if people_favorites is None:
+        raise APIException("People¨favorites not found", status_code=404)
     
     response_body = {
         "msg":"ok",
@@ -740,28 +741,21 @@ def add_people_favorites():
     if request_body is None or not request_body:
         raise APIException("You must send information", status_code=404)
     
-    if "user_id" not in request_body or request_body['user_id'] == "":
-        raise APIException("The user id is required", status_code=404)
-    
     if "people_uid" not in request_body or request_body["people_uid"] == "":
         raise APIException("The uid of people is required", status_code=404)
     
-    user_exists = User.query.filter_by(id=request_body['user_id']).first()
     people_exists = People.query.filter_by(uid=request_body['people_uid']).first()
-    
-    if user_exists is None:
-        raise APIException("User not found", status_code=404)
     
     if people_exists is None:
         raise APIException("People not found", status_code=404)
     
-    people_favorites_exists = PeopleFavorites.query.filter_by(user_id=request_body['user_id'], 
+    people_favorites_exists = PeopleFavorites.query.filter_by(user_id=current_user.id, 
                                                        people_uid=request_body['people_uid']).first()
     if people_favorites_exists:
         raise APIException("People favorites already exist", status_code=403)
     
     people_favorites = PeopleFavorites(
-        user_id = request_body['user_id'],
+        user_id = current_user.id,
         people_uid = request_body['people_uid']
     )
     
@@ -769,14 +763,14 @@ def add_people_favorites():
     
     response_body = {
         "msg": "ok",
-        "People Favorites": people_favorites.serialize()
+        "People_favorites": people_favorites.serialize()
     }
     
     return jsonify(response_body), 200
    
-@app.route("/people/favorites/<int:user_id>", methods=['DELETE'])
+@app.route("/people/favorites/<int:people_uid>", methods=['DELETE'])
 @jwt_required()
-def delete_people_favorites(user_id):
+def delete_people_favorites(people_uid):
     request_body = request.get_json(force=True, silent=True)
     
     user_login = get_jwt_identity()
@@ -796,7 +790,7 @@ def delete_people_favorites(user_id):
     if people is None:
         raise APIException("People not found", status_code=404)
     
-    people_favorites = PeopleFavorites.query.filter_by(user_id=user_id, people_uid=request_body['people_uid']).first()   
+    people_favorites = PeopleFavorites.query.filter_by(user_id=current_user.id, people_uid=request_body['people_uid']).first()   
     
     if people_favorites is None:
         raise APIException("People favorites not found", status_code=404) 
@@ -838,7 +832,7 @@ def get_planets_by_uid(planets_uid):
     
     response_body = {
         "msg": "ok",
-        "Planet": planets.serialize()
+        "Planets": planets.serialize()
     }
     
     return jsonify(response_body), 200
@@ -964,7 +958,7 @@ def get_details_planets(planets_uid):
     
     response_body = {
         "msg":"ok",
-        "result": planets_details.serialize()
+        "Results": planets_details.serialize()
     }
     
     return jsonify(response_body), 200
@@ -1086,7 +1080,7 @@ def edit_details_planets(planets_uid):
     
     response_body = {
         "msg":"ok",
-        "Planets Details": planets_details.serialize()
+        "Planets_details": planets_details.serialize()
     }
     
     return jsonify(response_body), 200
@@ -1114,20 +1108,21 @@ def delete_planets_details(planets_uid):
     return jsonify(response_body), 200
 
 # <------------------------------PlanetsFavorites------------------------------>
-@app.route("/planets/favorites/<int:user_id>", methods=['GET'])
+@app.route("/planets/favorites", methods=['GET'])
 @jwt_required()
-def get_planets_favorites(user_id):
-    planets_favorites = PlanetsFavorites.query.filter_by(user_id=user_id)
-    favorites = list(map(lambda favorite: favorite.serialize(), planets_favorites))
+def get_planets_favorites():
     
     user_login = get_jwt_identity()
     current_user = User.query.filter_by(email=user_login).first()
     
-    if planets_favorites is None:
-        raise APIException("Planets¨favorites not found", status_code=404)
+    planets_favorites = PlanetsFavorites.query.filter_by(user_id=current_user.id)
+    favorites = list(map(lambda favorite: favorite.serialize(), planets_favorites))
     
     if current_user is None:
         raise APIException("Access denied", status_code=403)
+    
+    if planets_favorites is None:
+        raise APIException("Planets¨favorites not found", status_code=404)
     
     response_body = {
         "msg":"ok",
@@ -1150,28 +1145,21 @@ def add_planets_favorites():
     if request_body is None or not request_body:
         raise APIException("You must send information", status_code=404)
     
-    if "user_id" not in request_body or request_body['user_id'] == "":
-        raise APIException("The user id is required", status_code=404)
-    
     if "planets_uid" not in request_body or request_body["planets_uid"] == "":
         raise APIException("The uid of planets is required", status_code=404)
     
-    user_exists = User.query.filter_by(id=request_body['user_id']).first()
     planets_exists = Planets.query.filter_by(uid=request_body['planets_uid']).first()
-    
-    if user_exists is None:
-        raise APIException("User not found", status_code=404)
     
     if planets_exists is None:
         raise APIException("Planets not found", status_code=404)
     
-    planets_favorites_exists = PlanetsFavorites.query.filter_by(user_id=request_body['user_id'], 
+    planets_favorites_exists = PlanetsFavorites.query.filter_by(user_id=current_user.id, 
                                                        planets_uid=request_body['planets_uid']).first()
     if planets_favorites_exists:
         raise APIException("Planets favorites already exist", status_code=403)
     
     planets_favorites = PlanetsFavorites(
-        user_id = request_body['user_id'],
+        user_id = current_user.id,
         planets_uid = request_body['planets_uid']
     )
     
@@ -1179,14 +1167,14 @@ def add_planets_favorites():
     
     response_body = {
         "msg": "ok",
-        "Planets Favorites": planets_favorites.serialize()
+        "Planets_favorites": planets_favorites.serialize()
     }
     
     return jsonify(response_body), 200
    
-@app.route("/planets/favorites/<int:user_id>", methods=['DELETE'])
+@app.route("/planets/favorites/<int:planets_uid>", methods=['DELETE'])
 @jwt_required()
-def delete_planets_favorites(user_id):
+def delete_planets_favorites():
     request_body = request.get_json(force=True, silent=True)
     
     user_login = get_jwt_identity()
@@ -1206,7 +1194,7 @@ def delete_planets_favorites(user_id):
     if planets is None:
         raise APIException("Planets not found", status_code=404)
     
-    planets_favorites = PlanetsFavorites.query.filter_by(user_id=user_id, planets_uid=request_body['planets_uid']).first()   
+    planets_favorites = PlanetsFavorites.query.filter_by(user_id=current_user.id, planets_uid=request_body['planets_uid']).first()   
     
     if planets_favorites is None:
         raise APIException("Planets favorites not found", status_code=404) 
@@ -1248,7 +1236,7 @@ def get_vehicles_by_uid(vehicles_uid):
     
     response_body = {
         "msg": "ok",
-        "Vehicle": vehicles.serialize()
+        "Vehicles": vehicles.serialize()
     }
     
     return jsonify(response_body), 200
@@ -1379,7 +1367,7 @@ def get_details_vehicles(vehicles_uid):
     
     response_body = {
         "msg":"ok",
-        "result": vehicles_details.serialize(),
+        "Results": vehicles_details.serialize(),
         "Pilots": vehicles
     }
     
@@ -1439,7 +1427,7 @@ def add_details_vehicles():
     
     response_body = {
         "msg":"ok",
-        "Vehicles Details": vehicles_details.serialize()
+        "Vehicles_details": vehicles_details.serialize()
     }
     
     return jsonify(response_body), 200
@@ -1510,7 +1498,7 @@ def edit_details_vehicles(vehicles_uid):
     
     response_body = {
         "msg":"ok",
-        "Vehicles Details": vehicles_details.serialize()
+        "Vehicles_details": vehicles_details.serialize()
     }
     
     return jsonify(response_body), 200
@@ -1538,20 +1526,21 @@ def delete_vehicles_details(vehicles_uid):
     return jsonify(response_body), 200
 
 # <------------------------------VehiclesFavorites------------------------------>
-@app.route("/vehicles/favorites/<int:user_id>", methods=['GET'])
+@app.route("/vehicles/favorites", methods=['GET'])
 @jwt_required()
-def get_vehicles_favorites(user_id):
-    vehicles_favorites = VehiclesFavorites.query.filter_by(user_id=user_id)
-    favorites = list(map(lambda favorite: favorite.serialize(), vehicles_favorites))
+def get_vehicles_favorites():
     
     user_login = get_jwt_identity()
     current_user = User.query.filter_by(email=user_login).first()
     
-    if vehicles_favorites is None:
-        raise APIException("Vehicles¨favorites not found", status_code=404)
-    
     if current_user is None:
         raise APIException("Access denied", status_code=403)
+    
+    vehicles_favorites = VehiclesFavorites.query.filter_by(user_id=current_user.id)
+    favorites = list(map(lambda favorite: favorite.serialize(), vehicles_favorites))
+    
+    if vehicles_favorites is None:
+        raise APIException("Vehicles¨favorites not found", status_code=404)
     
     response_body = {
         "msg":"ok",
@@ -1574,28 +1563,21 @@ def add_vehicles_favorites():
     if request_body is None or not request_body:
         raise APIException("You must send information", status_code=404)
     
-    if "user_id" not in request_body or request_body['user_id'] == "":
-        raise APIException("The user id is required", status_code=404)
-    
     if "vehicles_uid" not in request_body or request_body["vehicles_uid"] == "":
         raise APIException("The uid of vehicles is required", status_code=404)
     
-    user_exists = User.query.filter_by(id=request_body['user_id']).first()
     vehicles_exists = Vehicles.query.filter_by(uid=request_body['vehicles_uid']).first()
-    
-    if user_exists is None:
-        raise APIException("User not found", status_code=404)
     
     if vehicles_exists is None:
         raise APIException("Vehicles not found", status_code=404)
     
-    vehicles_favorites_exists = VehiclesFavorites.query.filter_by(user_id=request_body['user_id'], 
+    vehicles_favorites_exists = VehiclesFavorites.query.filter_by(user_id=current_user.id, 
                                                        vehicles_uid=request_body['vehicles_uid']).first()
     if vehicles_favorites_exists:
         raise APIException("Vehicles favorites already exist", status_code=403)
     
     vehicles_favorites = VehiclesFavorites(
-        user_id = request_body['user_id'],
+        user_id = current_user.id,
         vehicles_uid = request_body['vehicles_uid']
     )
     
@@ -1603,14 +1585,14 @@ def add_vehicles_favorites():
     
     response_body = {
         "msg": "ok",
-        "Vehicles Favorites": vehicles_favorites.serialize()
+        "Vehicles_favorites": vehicles_favorites.serialize()
     }
     
     return jsonify(response_body), 200
    
 @app.route("/vehicles/favorites/<int:user_id>", methods=['DELETE'])
 @jwt_required()
-def delete_vehicles_favorites(user_id):
+def delete_vehicles_favorites():
     request_body = request.get_json(force=True, silent=True)
     
     user_login = get_jwt_identity()
@@ -1630,7 +1612,7 @@ def delete_vehicles_favorites(user_id):
     if vehicles is None:
         raise APIException("Vehicles not found", status_code=404)
     
-    vehicles_favorites = VehiclesFavorites.query.filter_by(user_id=user_id, vehicles_uid=request_body['vehicles_uid']).first()   
+    vehicles_favorites = VehiclesFavorites.query.filter_by(user_id=current_user.id, vehicles_uid=request_body['vehicles_uid']).first()   
     
     if vehicles_favorites is None:
         raise APIException("Vehicles favorites not found", status_code=404) 
@@ -1687,7 +1669,7 @@ def add_vehicles_people():
     
     response_body = {
         "msg": "ok",
-        "Vehicles People": vehicles_people.serialize()
+        "Vehicles_people": vehicles_people.serialize()
     }
     
     return jsonify(response_body), 200
@@ -1762,7 +1744,7 @@ def get_starships_by_uid(starships_uid):
     
     response_body = {
         "msg": "ok",
-        "Vehicle": starships.serialize()
+        "Starships": starships.serialize()
     }
     
     return jsonify(response_body), 200
@@ -1892,7 +1874,7 @@ def get_details_starships(starships_uid):
     
     response_body = {
         "msg":"ok",
-        "result": starships_details.serialize(),
+        "Results": starships_details.serialize(),
         "Pilots": starships
     }
     
@@ -1954,7 +1936,7 @@ def add_details_starships():
     
     response_body = {
         "msg":"ok",
-        "Starships Details": starships_details.serialize()
+        "Starships_details": starships_details.serialize()
     }
     
     return jsonify(response_body), 200
@@ -2031,7 +2013,7 @@ def edit_details_starships(starships_uid):
     
     response_body = {
         "msg":"ok",
-        "Starships Details": starships_details.serialize()
+        "Starships_details": starships_details.serialize()
     }
     
     return jsonify(response_body), 200
@@ -2059,20 +2041,22 @@ def delete_starships_details(starships_uid):
     return jsonify(response_body), 200
 
 # <------------------------------StarshipsFavorites------------------------------>
-@app.route("/starships/favorites/<int:user_id>", methods=['GET'])
+@app.route("/starships/favorites", methods=['GET'])
 @jwt_required()
-def get_starships_favorites(user_id):
-    starships_favorites = StarshipFavorites.query.filter_by(user_id=user_id)
-    favorites = list(map(lambda favorite: favorite.serialize(), starships_favorites))
+def get_starships_favorites():
     
     user_login = get_jwt_identity()
     current_user = User.query.filter_by(email=user_login).first()
     
-    if starships_favorites is None:
-        raise APIException("starships¨favorites not found", status_code=404)
+    starships_favorites = StarshipFavorites.query.filter_by(user_id=current_user.id)
+    favorites = list(map(lambda favorite: favorite.serialize(), starships_favorites))
     
     if current_user is None:
         raise APIException("Access denied", status_code=403)
+
+    if starships_favorites is None:
+        raise APIException("starships¨favorites not found", status_code=404)
+    
     
     response_body = {
         "msg":"ok",
@@ -2095,28 +2079,21 @@ def add_starships_favorites():
     if request_body is None or not request_body:
         raise APIException("You must send information", status_code=404)
     
-    if "user_id" not in request_body or request_body['user_id'] == "":
-        raise APIException("The user id is required", status_code=404)
-    
     if "starships_uid" not in request_body or request_body["starships_uid"] == "":
         raise APIException("The uid of starships is required", status_code=404)
     
-    user_exists = User.query.filter_by(id=request_body['user_id']).first()
     starships_exists = Starships.query.filter_by(uid=request_body['starships_uid']).first()
-    
-    if user_exists is None:
-        raise APIException("User not found", status_code=404)
     
     if starships_exists is None:
         raise APIException("Starships not found", status_code=404)
     
-    starships_favorites_exists = StarshipFavorites.query.filter_by(user_id=request_body['user_id'], 
+    starships_favorites_exists = StarshipFavorites.query.filter_by(user_id=current_user.id, 
                                                        starship_uid=request_body['starships_uid']).first()
     if starships_favorites_exists:
         raise APIException("Starships favorites already exist", status_code=403)
     
     starships_favorites = StarshipFavorites(
-        user_id = request_body['user_id'],
+        user_id = current_user.id,
         starship_uid = request_body['starships_uid']
     )
     
@@ -2124,14 +2101,14 @@ def add_starships_favorites():
     
     response_body = {
         "msg": "ok",
-        "Starships Favorites": starships_favorites.serialize()
+        "Starships_favorites": starships_favorites.serialize()
     }
     
     return jsonify(response_body), 200
    
 @app.route("/starships/favorites/<int:user_id>", methods=['DELETE'])
 @jwt_required()
-def delete_starships_favorites(user_id):
+def delete_starships_favorites():
     request_body = request.get_json(force=True, silent=True)
     
     user_login = get_jwt_identity()
@@ -2151,7 +2128,7 @@ def delete_starships_favorites(user_id):
     if starships is None:
         raise APIException("starships not found", status_code=404)
     
-    starships_favorites = StarshipFavorites.query.filter_by(user_id=user_id, starship_uid=request_body['starships_uid']).first()   
+    starships_favorites = StarshipFavorites.query.filter_by(user_id=current_user.id, starship_uid=request_body['starships_uid']).first()   
     
     if starships_favorites is None:
         raise APIException("Starships favorites not found", status_code=404) 
@@ -2208,7 +2185,7 @@ def add_starships_people():
     
     response_body = {
         "msg": "ok",
-        "Starships Favorites": starships_people.serialize()
+        "Starships_favorites": starships_people.serialize()
     }
     
     return jsonify(response_body), 200

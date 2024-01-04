@@ -29,6 +29,12 @@ const injectContext = PassedComponent => {
 			 * store, instead use actions, like this:
 			 **/
 			// <---- calling this function from the flux.js actions
+			if(state.store.isLoggedIn){
+				state.actions.getPeopleFavorites()
+				state.actions.getPlanetsFavorites()
+				state.actions.getVehiclesFavorites()
+				state.actions.getStarshipsFavorites()
+			}
 		}, [state.store.isLoggedIn, state.store.userLogin]);
 
 		// The initial value for the context is not null anymore, but the current state of this component,

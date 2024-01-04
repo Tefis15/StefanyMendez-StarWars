@@ -13,7 +13,7 @@ export const People = () => {
 	useEffect(() => {
 		actions.getAllPeople()
 		actions.getAllPlanets()
-	}, [store.showModal, store.showModalDetails, store.deleted])
+	}, [store.showModal, store.showModalDetails, store.deleted, store.favoritesPeople])
 
 	return (
 		<>
