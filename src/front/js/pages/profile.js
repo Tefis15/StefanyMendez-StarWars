@@ -23,7 +23,7 @@ export const Profile = () => {
                         defaultValue="Stefany"
                         readOnly
                     />
-                    <label className='text-warning' for="floatingInput">Name</label>
+                    <label className='text-warning' htmlFor="floatingInput">Name</label>
                 </div>
                 <div className="form-floating mb-3">
                     <input
@@ -33,7 +33,7 @@ export const Profile = () => {
                         defaultValue="tefa15@hotmail.es"
                         readOnly
                     />
-                    <label className='text-warning' for="floatingInput">Email address</label>
+                    <label className='text-warning' htmlFor="floatingInput">Email address</label>
                 </div>
                 <div className="form-floating mb-3">
                     <input
@@ -43,7 +43,7 @@ export const Profile = () => {
                         id="floatingInput"
                         placeholder='Phone'
                     />
-                    <label className='text-warning' for="floatingInput">Phone</label>
+                    <label className='text-warning' htmlFor="floatingInput">Phone</label>
                 </div>
                 <div className="form-floating d-flex position-relative align-items-center">
                     <input type={showPass ? "text" : "password"} className="form-control input-profile " id="floatingPassword" placeholder="Password" />
@@ -53,7 +53,7 @@ export const Profile = () => {
                             <i className="fa-solid fa-eye-slash text-warning"></i>
                         }
                     </div>
-                    <label className="text-warning" for="floatingPassword">New Password</label>
+                    <label className="text-warning" htmlFor="floatingPassword">New Password</label>
                 </div>
                 <div className="form-floating d-flex position-relative align-items-center">
                     <input type={showConfirmPass ? "text" : "password"} className="form-control input-profile" id="floatingPassword" placeholder="Password" />
@@ -63,7 +63,7 @@ export const Profile = () => {
                             <i className="fa-solid fa-eye-slash text-warning"></i>
                         }
                     </div>
-                    <label className="text-warning" for="floatingPassword">Confirm Password</label>
+                    <label className="text-warning" htmlFor="floatingPassword">Confirm Password</label>
                 </div>
                 <div className='text-center mb-2'>
                     <button className="btn btn-yellow mt-2" type="submit" onClick={() => {

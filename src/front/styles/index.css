@@ -35,6 +35,9 @@ body{
     font-size: 1.3rem;
     font-weight: 900;
 }
+.badge{
+    font-size: 1.1rem;
+}
 .btn-yellow{
     color:black;
     background-color: #FFC107;

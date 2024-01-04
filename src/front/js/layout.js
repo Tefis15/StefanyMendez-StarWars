@@ -21,6 +21,7 @@ import PeopleDetails from "./pages/peopleDetails.js";
 import PlanetsDetails from "./pages/planetsDetails.js";
 import StarshipsDetails from "./pages/starshipsDetails.js";
 import VehiclesDetails from "./pages/vehiclesDetails.js";
+import { Favorites } from "./pages/favorites.js";
 
 //create your first component
 const Layout = () => {
@@ -49,6 +50,7 @@ const Layout = () => {
                         <Route element={<PlanetsDetails />} path="/planetsdetails" />
                         <Route element={<StarshipsDetails />} path="/starshipsdetails" />
                         <Route element={<VehiclesDetails />} path="/vehiclesdetails" />
+                        <Route element={<Favorites />} path="/favorites" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}
