@@ -66,6 +66,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 		},
 		actions: {
+			//<---------------------------Login------------------------------>//
 			login: async () => {
 				const store = getStore()
 				const actions = getActions()
@@ -156,6 +157,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				localStorage.clear();
 			},
 
+			//<---------------------------People------------------------------>//
 			getAllPeople: async () => {
 				try {
 					const response = await fetch(process.env.BACKEND_URL + '/people', {
@@ -507,7 +509,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					} else {
 						setStore({ favoritesPeople: [] })
 					}
-					
+
 				} catch (error) {
 					console.log(error + " Error in getPeopleFavorites")
 				}
@@ -539,7 +541,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 				} catch (error) {
-					console.log(error + " Error in getPeopleFavorites")
+					console.log(error + " Error in addPeopleFavorites")
 				}
 
 			},
@@ -552,7 +554,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					favorite.people_uid = uid
 
-					const response = await fetch(process.env.BACKEND_URL + `/people/favorites/${uid}`, {
+					const response = await fetch(process.env.BACKEND_URL + `/people/favorites`, {
 						method: 'DELETE',
 						body: JSON.stringify(favorite),
 						headers: {
@@ -570,11 +572,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 				} catch (error) {
-					console.log(error + " Error in getPeopleFavorites")
+					console.log(error + " Error in deletePeopleFavorites")
 				}
-
 			},
 
+			//<---------------------------Planets------------------------------>//
+			getAllPlanets: async () => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + '/planets', {
+						method: 'GET'
+					})
+					const result = await response.json()
+
+					setStore({ planets: result.Results })
+				} catch (error) {
+					console.log(error + " Error in getAllPlanets")
+				}
+			},
 			getPlanetsFavorites: async () => {
 
 				try {
@@ -596,9 +610,73 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 				} catch (error) {
-					console.log(error + " Error in getPeopleFavorites")
+					console.log(error + " Error in getPlanetsFavorites")
 				}
 			},
+			addFavoritesPlanets: async (uid) => {
+				try {
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let favorite = {}
+
+					favorite.planets_uid = uid
+
+					const response = await fetch(process.env.BACKEND_URL + '/planets/favorites', {
+						method: 'POST',
+						body: JSON.stringify(favorite),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.getPlanetsFavorites()
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in addPlanetsFavorites")
+				}
+
+			},
+			deleteFavoritesPlanets: async (uid) => {
+				try {
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let favorite = {}
+
+					favorite.planets_uid = uid
+
+					const response = await fetch(process.env.BACKEND_URL + `/planets/favorites`, {
+						method: 'DELETE',
+						body: JSON.stringify(favorite),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.getPlanetsFavorites()
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in deletePlanetsFavorites")
+				}
+			},
+
+
+			//<---------------------------Vehciles------------------------------>//
 			getVehiclesFavorites: async () => {
 
 				try {
@@ -620,14 +698,77 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 				} catch (error) {
-					console.log(error + " Error in getPeopleFavorites")
+					console.log(error + " Error in getVehiclesFavorites")
 				}
 			},
+			addFavoritesVehicles: async (uid) => {
+				try {
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let favorite = {}
+
+					favorite.vehicles_uid = uid
+
+					const response = await fetch(process.env.BACKEND_URL + '/vehicles/favorites', {
+						method: 'POST',
+						body: JSON.stringify(favorite),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.getVehiclesFavorites()
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in addVehiclesFavorites")
+				}
+
+			},
+			deleteFavoritesVehicles: async (uid) => {
+				try {
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let favorite = {}
+
+					favorite.vehicles_uid = uid
+
+					const response = await fetch(process.env.BACKEND_URL + `/vehicles/favorites/${uid}`, {
+						method: 'DELETE',
+						body: JSON.stringify(favorite),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.getVehiclesFavorites()
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in deleteVehiclesFavorites")
+				}
+			},
+
+			//<---------------------------Starships------------------------------>//
 			getStarshipsFavorites: async () => {
-				
+
 				try {
 					const token = localStorage.getItem('jwt-token')
-					
+
 					const response = await fetch(process.env.BACKEND_URL + `/starships/favorites`, {
 						method: 'GET',
 						headers: {
@@ -644,22 +785,71 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 				} catch (error) {
-					console.log(error + " Error in getPeopleFavorites")
+					console.log(error + " Error in getStarshipsFavorites")
 				}
 			},
-
-			getAllPlanets: async () => {
+			addFavoritesStarships: async (uid) => {
 				try {
-					const response = await fetch(process.env.BACKEND_URL + '/planets', {
-						method: 'GET'
-					})
-					const result = await response.json()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
 
-					setStore({ planets: result.Results })
+					let favorite = {}
+
+					favorite.starships_uid = uid
+
+					const response = await fetch(process.env.BACKEND_URL + '/starships/favorites', {
+						method: 'POST',
+						body: JSON.stringify(favorite),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.getStarshipsFavorites()
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+
 				} catch (error) {
-					console.log(error + " Error in getAllPlanets")
+					console.log(error + " Error in addStarshipsFavorites")
+				}
+
+			},
+			deleteFavoritesStarships: async (uid) => {
+				try {
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let favorite = {}
+
+					favorite.starships_uid = uid
+
+					const response = await fetch(process.env.BACKEND_URL + `/starships/favorites/${uid}`, {
+						method: 'DELETE',
+						body: JSON.stringify(favorite),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.getStarshipsFavorites()
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in deleteStarshipsFavorites")
 				}
 			},
+
 
 			clearStore: () => {
 
