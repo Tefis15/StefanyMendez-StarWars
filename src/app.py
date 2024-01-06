@@ -335,6 +335,9 @@ def edit_user_password(user_email):
     if request_body is None or not request_body:
         raise APIException("You must send information", status_code=404)
     
+    if "phone" in request_body and request_body['phone'] != "":
+        user.phone = request_body['phone']
+    
     if "password" in request_body and request_body['password'] != "":
         pw_hash = bcrypt.generate_password_hash(request_body['password']).decode("utf-8")
         user.password = pw_hash
