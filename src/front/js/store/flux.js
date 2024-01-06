@@ -157,6 +157,91 @@ const getState = ({ getStore, getActions, setStore }) => {
 				localStorage.clear();
 			},
 
+			//<---------------------------User------------------------------>//
+			getUserById: async (id) => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					const response = await fetch(process.env.BACKEND_URL + `/user/${id}`, {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+					console.log(result);
+					if (result.msg == "ok"){
+
+						setStore({ userLogin: result.User })
+						localStorage.setItem("userLogin", JSON.stringify(result.User))
+					}else{
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in getUserById")
+				}
+			},
+			editUser: async (email) => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let user = {}
+					if (store.password != null && store.confirmPassword != null) {
+						if (store.password == store.confirmPassword) {
+
+							user.password = store.password
+
+						} else {
+							actions.showSwalError("The password don't match")
+						}
+					}
+					if (store.phone != null) {
+						user.phone = store.phone
+					}
+
+					const response = await fetch(process.env.BACKEND_URL + `/user/${email}`, {
+						method: 'PUT',
+						body: JSON.stringify(user),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						actions.getUserById(result.User.id)
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.User.name} the info was successfully edited`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+								url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+								no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+								url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+								right top 
+								no-repeat`
+						})
+						actions.clearStore()
+					} else {
+						actions.showSwalError(result.message)
+						actions.clearStore()
+					}
+				} catch (error) {
+					console.log(error + " Error in editUser")
+				}
+			},
+
 			//<---------------------------People------------------------------>//
 			getAllPeople: async () => {
 				try {
@@ -245,16 +330,18 @@ const getState = ({ getStore, getActions, setStore }) => {
 							color: "#FFC107",
 							showConfirmButton: false,
 							background: `#000000
-								url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
-								no-repeat`,
+							url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+							no-repeat`,
 							backdrop: `rgba(0,0,123,0.4)
-								url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
-								right top 
-								no-repeat`
+							url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+							right top 
+							no-repeat`
 						})
+						actions.clearStore()
 					}
 					else {
 						actions.showSwalError(result.message)
+						actions.clearStore()
 					}
 				} catch (error) {
 					console.log(error + " Error in addPeople")
@@ -675,7 +762,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-
 			//<---------------------------Vehciles------------------------------>//
 			getVehiclesFavorites: async () => {
 
@@ -852,6 +938,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 
 			clearStore: () => {
+
+				setStore({ email: null })
+				setStore({ phone: null })
+				setStore({ password: null })
+				setStore({ confirmPassword: null })
+				setStore({ isActive: null })
+				setStore({ role: null })
+
 
 				setStore({ uid: null })
 				setStore({ name: null })
