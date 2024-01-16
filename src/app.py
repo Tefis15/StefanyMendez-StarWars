@@ -2,7 +2,9 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
-from flask import Flask, request, jsonify, url_for, send_from_directory
+import string
+import secrets
+from flask import Flask, request, jsonify, url_for, send_from_directory, render_template
 from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_cors import CORS
@@ -19,6 +21,7 @@ from flask_jwt_extended import (
     create_access_token,
     JWTManager,
 )
+from flask_mail import Mail, Message
 from flask_bcrypt import Bcrypt
 from datetime import datetime
 
@@ -42,11 +45,21 @@ else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'dev.solutions.team23@gmail.com'
+app.config['MAIL_PASSWORD'] = os.environ.get('EMAIL_PASSWORD')
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 MIGRATE = Migrate(app, db, compare_type = True)
 db.init_app(app)
 
 # Allow CORS requests to this API
 CORS(app)
+
+mail = Mail(app)
+
 
 # add the admin
 setup_admin(app)
@@ -113,6 +126,32 @@ def login():
     
     return jsonify(response_body), 200
     
+@app.route('/resetPassword/<string:user_email>', methods=['POST'])
+def sendPassword (user_email):
+    user = User.query.filter_by(email=user_email).first()
+    
+    if user is None:
+        raise APIException("User not found", status_code=404) 
+    
+    alphabet = string.ascii_letters + string.digits
+    password = ''.join(secrets.choice(alphabet) for i in range(8))
+    
+    pw_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+    user.password = pw_hash
+        
+    user.update()
+    
+    msg = Message('Reset Password', sender='noreply@starwars.com',
+                  recipients=[user.email])
+    msg.html = render_template("sendEmail.html", new_password=password, name=user.name) 
+    
+    mail.send(msg)
+    
+    response_body = {
+        "msg": "ok"
+    }
+    return jsonify(response_body), 200      
+        
 # <------------------------------User------------------------------>
 @app.route('/user', methods=['GET'])
 @jwt_required()
