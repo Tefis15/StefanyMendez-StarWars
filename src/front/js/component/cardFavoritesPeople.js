@@ -10,9 +10,9 @@ export const CardFavoritesPeople = ({ favorite }, ...props) => {
     return (
         <>
             <div className="">
-                <div className="card card-people h-100">
+                <div className="card card-all ">
                     <img src={`https://starwars-visualguide.com/assets/img/characters/${favorite.people_uid.uid}.jpg`}
-                        className="card-img-top img-card-people h-100" alt="..."
+                        className="card-img-top img-card-all h-100" alt="..."
                         onError={({ currentTarget }) => {
                             currentTarget.onerror = null;
                             currentTarget.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg";
