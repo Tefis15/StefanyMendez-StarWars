@@ -13,9 +13,9 @@ export const CardPeople = ({ character }, ...props) => {
     return (
         <>
             <div className="">
-                <div className="card card-people h-100">
+                <div className="card card-all h-100">
                     <img src={`https://starwars-visualguide.com/assets/img/characters/${character.uid}.jpg`}
-                        className="card-img-top img-card-people h-100" alt="..."
+                        className="card-img-top img-card-all h-100" alt="..."
                         onError={({ currentTarget }) => {
                             currentTarget.onerror = null;
                             currentTarget.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg";
@@ -24,10 +24,9 @@ export const CardPeople = ({ character }, ...props) => {
                         onClick={() => {
                             !!store.isLoggedIn ?
                                 store.favoritesPeople.find((favorite) => favorite.people_uid.uid === character.uid) ?
-                                actions.deleteFavoritesPeople(character.uid)
-                                :
-                                actions.addFavoritesPeople(character.uid) 
-
+                                    actions.deleteFavoritesPeople(character.uid)
+                                    :
+                                    actions.addFavoritesPeople(character.uid)
                                 : Swal.fire({
                                     icon: 'warning',
                                     text: "Please LogIn or SingIn for add favorites",

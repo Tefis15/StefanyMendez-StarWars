@@ -174,7 +174,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const result = await response.json()
 					console.log(result);
 					if (result.msg == "ok"){
-
 						setStore({ userLogin: result.User })
 						localStorage.setItem("userLogin", JSON.stringify(result.User))
 					}else{

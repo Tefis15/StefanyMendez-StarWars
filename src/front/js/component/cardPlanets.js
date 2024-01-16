@@ -15,8 +15,8 @@ export const CardPlanets = ({ planet }, ...props) => {
 
     return (
         <div className="">
-            <div className="card card-planets h-100">
-                <img src={`https://starwars-visualguide.com/assets/img/planets/6.jpg`} className="card-img-top img-card-planets h-100" alt="..."
+            <div className="card card-all h-100">
+                <img src={`https://starwars-visualguide.com/assets/img/planets/6.jpg`} className="card-img-top img-card-all h-100" alt="..."
                     onError={({ currentTarget }) => {
                         currentTarget.onerror = null;
                         currentTarget.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg";
