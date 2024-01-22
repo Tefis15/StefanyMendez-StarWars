@@ -1,28 +1,30 @@
 .container-forget-pass {
-    background: rgba(0, 0, 0, 0.2);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    margin: auto;
-    margin-top: 5rem;
-    margin-bottom: 15rem;
-    width: 23rem;
-    height: fit-content;
-    border-radius: 1.5rem;
-    box-shadow: 5px 5px 10px 1px #000000;
-  }
-  .img-form-forget-pass{
-    width: 19rem;
-    height: 14rem;
-  }
-  .input-forget-pass{
-    background: transparent;
-    border: none;
-    border-bottom: 0.6px solid white;
-    border-top: 0.2px solid grey;
-    color: white;
+  background: rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  margin: auto;
+  margin-top: 5rem;
+  margin-bottom: 15rem;
+  width: 23rem;
+  height: fit-content;
+  border-radius: 1.5rem;
+  box-shadow: 5px 5px 10px 1px #000000;
+}
 
-    &:focus{
-      background: transparent;
-      color: white;
+.img-form-forget-pass {
+  width: 19rem;
+  height: 14rem;
+}
+
+.input-forget-pass {
+  background: transparent;
+  border: none;
+  border-bottom: 0.6px solid white;
+  border-top: 0.2px solid grey;
+  color: white;
+
+  &:focus {
+    background: transparent;
+    color: white;
   }
-  }
+}

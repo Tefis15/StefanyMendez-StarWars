@@ -42,11 +42,18 @@ export const Navbar = () => {
 							<Link to="/favorites" className="nav-link text-decoration-none position-relative"
 								id="dropdownMenuButton1" data-bs-auto-close="outside" aria-expanded="false">
 								<span className="nav-span">Favorites</span>
-								<span className="position-absolute top-25 ms-2 start-100 translate-middle badge rounded-pill bg-danger ">
+								<span className="position-absolute top-25 start-100 translate-middle badge rounded-pill bg-danger ">
 									{store.isLoggedIn ? store.favoritesPeople.length + store.favoritesPlanets.length
 										+ store.favoritesVehicles.length + store.favoritesStarships.length : 0}
 									<span className="visually-hidden">Not Favorites</span>
 								</span>
+							</Link>
+						</li>
+						<li className="nav-link nav-item nav-menu ms-3"
+							hidden={store.isLoggedIn && store.userLogin.role == "admin" ? false : true}>
+							<Link to="/users" className="nav-link text-decoration-none position-relative"
+								id="dropdownMenuButton1" data-bs-auto-close="outside" aria-expanded="false">
+								<span className="nav-span">Users</span>
 							</Link>
 						</li>
 					</ul>

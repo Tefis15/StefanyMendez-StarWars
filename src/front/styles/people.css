@@ -1,4 +1,4 @@
-.p-description{
+.p-description {
     background: rgba(0, 0, 0, 0.2);
     -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
@@ -8,11 +8,14 @@
     color: white;
     text-align: justify;
 }
-.input-select, .select-modal{
+
+.input-select,
+.select-modal {
     background-color: transparent;
     color: white;
 }
-.option-modal{
+
+.option-modal {
     background-color: #FFC107;
     color: #000000;
 }

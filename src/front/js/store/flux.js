@@ -14,14 +14,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 			userLogin: JSON.parse(localStorage.getItem("userLogin")) == undefined ? {} : JSON.parse(localStorage.getItem("userLogin")),
 			isLoggedIn: JSON.parse(localStorage.getItem("isLoggedIn")) == undefined ? false : JSON.parse(localStorage.getItem("isLoggedIn")),
-			emailSent : false,
+			emailSent: false,
 
+			users: [],
+			user: null,
 			phone: null,
 			email: null,
 			role: null,
 			isActive: null,
 			password: null,
 			confirmPassword: null,
+			userEdited: false,
 
 			uid: "",
 			name: null,
@@ -121,7 +124,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 							setStore({ userLogin: result.User })
 							setStore({ isLoggedIn: true })
 							actions.clearStore()
-							setTimeout(actions.logOut, 600000)
+							setTimeout(actions.logOut, 500000)
 
 						} else {
 							Swal.fire({
@@ -157,48 +160,65 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ favoritesStarships: [] })
 				localStorage.clear();
 			},
-			resetPassword : async () =>{
-				try{
-				const store = getStore()
-				const actions = getActions()
+			resetPassword: async () => {
+				try {
+					const store = getStore()
+					const actions = getActions()
 
-				const response = await fetch(process.env.BACKEND_URL + `/resetPassword/${store.email}`,{
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json'
-					}
-				})
-				const result = await response.json()
+					const response = await fetch(process.env.BACKEND_URL + `/resetPassword/${store.email}`, {
+						method: 'POST',
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					})
+					const result = await response.json()
 
-				if (result.msg == "ok"){
-					setStore({ emailSent: true})
-					Swal.fire({
-						title: "Do it!!!",
-						text: `Email Sent`,
-						timer: 3000,
-						padding: "2em",
-						color: "#FFC107",
-						showConfirmButton: false,
-						background: `#000000
+					if (result.msg == "ok") {
+						setStore({ emailSent: true })
+						Swal.fire({
+							title: "Do it!!!",
+							text: `Email Sent`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
 						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
 						no-repeat`,
-						backdrop: `rgba(0,0,123,0.4)
+							backdrop: `rgba(0,0,123,0.4)
 						url("https://media0.giphy.com/media/sFawvbjwFzgZdAa7K3/giphy.gif?cid=6c09b952c62nytmzsvs25flf4kqhqcob45kopogktsqn4xx9&ep=v1_stickers_related&rid=giphy.gif&ct=s")
 						right top 
 						no-repeat`
-					})
-					actions.clearStore()
-					setStore({emailSent: false})
-				}else{
-					actions.showSwalError(result.message)
-					actions.clearStore()
+						})
+						actions.clearStore()
+						setStore({ emailSent: false })
+					} else {
+						actions.showSwalError(result.message)
+						actions.clearStore()
+					}
+				} catch (error) {
+					console.log(error + " Error in resetPassword")
 				}
-			}catch (error) {
-				console.log(error + " Error in resetPassword")
-			}
 			},
 
 			//<---------------------------User------------------------------>//
+			getAllUsers: async () => {
+				try {
+					const token = localStorage.getItem('jwt-token')
+					const response = await fetch(process.env.BACKEND_URL + '/user', {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					setStore({ users: result.Users })
+				} catch (error) {
+					console.log(error + " Error in getAllUsers")
+				}
+			},
 			getUserById: async (id) => {
 				try {
 					const store = getStore()
@@ -213,11 +233,35 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 					})
 					const result = await response.json()
+					
+					if (result.msg == "ok") {
+						setStore({ user: result.User })
+					} else {
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in getUserById")
+				}
+			},
+			getUserByIdLogin: async (id) => {
+				try {
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					const response = await fetch(process.env.BACKEND_URL + `/user/${id}`, {
+						method: 'GET',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
 					console.log(result);
-					if (result.msg == "ok"){
+					if (result.msg == "ok") {
 						setStore({ userLogin: result.User })
 						localStorage.setItem("userLogin", JSON.stringify(result.User))
-					}else{
+					} else {
 						actions.showSwalError(result.message)
 					}
 
@@ -256,7 +300,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const result = await response.json()
 
 					if (result.msg == "ok") {
-						actions.getUserById(result.User.id)
+						actions.getUserByIdLogin(result.User.id)
 						Swal.fire({
 							title: "Do it!!!",
 							text: `${result.User.name} the info was successfully edited`,
@@ -279,6 +323,274 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 				} catch (error) {
 					console.log(error + " Error in editUser")
+				}
+			},
+			editUserActiveAdmin: async (id) => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					const user = {}
+
+
+					if (store.isActive != null) {
+						console.log(user);
+						if (store.isActive == "true") {
+							user.is_active = true
+							console.log(user);
+						}
+					}
+					if (store.isActive != null) {
+						if (store.isActive == "false") {
+							user.is_active = false
+							console.log(user);
+						}
+					}
+
+					const response = await fetch(process.env.BACKEND_URL + `/admin/user/${id}`, {
+						method: 'PUT',
+						body: JSON.stringify(user),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						setStore({ userEdited: true })
+						setStore({ userEdited: false })
+						actions.clearStore()
+					} else {
+						setStore({ userEdited: false })
+						actions.showSwalError(result.message)
+						actions.clearStore()
+					}
+				} catch (error) {
+					console.log(error + " Error in editUserAdmin")
+				}
+			},
+			addUser: async () => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+
+					const user = {}
+
+					if (store.password != null && store.confirmPassword != null) {
+						if (store.password == store.confirmPassword)
+							user.password = store.password
+						else
+							actions.showSwalError("The password don't match")
+
+					}
+					if (store.name != null)
+						user.name = store.name
+
+					if (store.phone != null)
+						user.phone = store.phone
+
+					if (store.email != null)
+						user.email = store.email
+
+
+					const response = await fetch(process.env.BACKEND_URL + '/user', {
+						method: 'POST',
+						body: JSON.stringify(user),
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					})
+					const result = await response.json()
+					if (result.msg == "ok") {
+						Swal.fire({
+							title: "Do it!!!",
+							text: `Welcome ${result.User.name}`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+							url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+							no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+							url("https://64.media.tumblr.com/44c8c892b4bc22685344a2cedf044b8a/0646d51ff4487ec9-77/s500x750/4c9e28ee49d31b551f91d0b82cca8d67b6a03c10.gif")
+							right top 
+							no-repeat`
+						})
+						actions.clearStore()
+					}
+					else {
+						actions.showSwalError(result.message)
+						actions.clearStore()
+					}
+				} catch (error) {
+					console.log(error + " Error in addUser")
+				}
+
+			},
+			addUserAdmin: async () => {
+				try {
+
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					const user = {}
+
+					if (store.name != null)
+						user.name = store.name
+
+					if (store.phone != null)
+						user.phone = store.phone
+
+					if (store.email != null)
+						user.email = store.email
+
+					if (store.password != null)
+						user.password = store.password
+
+					if (store.role != null)
+						user.role = store.role
+
+					user.is_active = true
+
+					const response = await fetch(process.env.BACKEND_URL + '/admin/user', {
+						method: 'POST',
+						body: JSON.stringify(user),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						actions.handleDeleteModal()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.User.id} - ${result.User.name} was successfully added`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+							url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+							no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+							url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+							right top 
+							no-repeat`
+						})
+						actions.clearStore()
+					} else {
+						actions.showSwalError(result.message)
+						actions.clearStore()
+					}
+				} catch (error) {
+					console.log(error + " Error in addUserAdmin")
+				}
+			},
+			editUserAdmin: async (id) => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					const user = {}
+					if (store.name != null)
+						user.name = store.name
+
+					if (store.phone != null)
+						user.phone = store.phone
+
+					if (store.email != null)
+						user.email = store.email
+
+					if (store.password != null)
+						user.password = store.password
+
+					if (store.role != null)
+						user.role = store.role
+
+					const response = await fetch(process.env.BACKEND_URL + `/admin/user/${id}`, {
+						method: 'PUT',
+						body: JSON.stringify(user),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						actions.handleDeleteModal()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.User.id} - ${result.User.name} was successfully edited`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+							url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+							no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+							url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+							right top 
+							no-repeat`
+						})
+						actions.clearStore()
+					} else {
+						setStore({ userEdited: false })
+						actions.showSwalError(result.message)
+						actions.clearStore()
+					}
+				} catch (error) {
+					console.log(error + " Error in editUserAdmin")
+				}
+			},
+			deleteUser: async (id, name) => {
+				try {
+					const token = localStorage.getItem('jwt-token')
+
+					const response = await fetch(process.env.BACKEND_URL + `/user/${id}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+					console.log(result);
+					if (result.msg == "ok") {
+						setStore({ deleted: true })
+						Swal.fire({
+							title: 'Deleted!',
+							text: `The user ${name} was deleted`,
+							icon: 'success',
+							showConfirmButton: false,
+							color: '#FFFFFF',
+							background: `#000000
+						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+						no-repeat`,
+							timer: 3000,
+							backdrop: `
+						rgba(0,0,123,0.4)
+						url("https://i.pinimg.com/originals/96/ea/bc/96eabc812b02070e025cb41776b91803.gif")
+						right top 
+						no-repeat
+						`
+						})
+						setStore({ deleted: false })
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+				} catch (error) {
+					console.log(error + " Error in deletePeople")
 				}
 			},
 
@@ -468,6 +780,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						no-repeat
 						`
 						})
+						setStore({ deleted: false })
 					}
 					else {
 						actions.showSwalError(result.message)
@@ -620,6 +933,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			getPeopleFavorites: async () => {
 
 				try {
+					const actions = getActions()
 					const token = localStorage.getItem('jwt-token')
 
 					const response = await fetch(process.env.BACKEND_URL + `/people/favorites`, {
@@ -633,8 +947,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					if (result.msg == "ok") {
 						setStore({ favoritesPeople: result.Results })
-					} else {
 						setStore({ favoritesPeople: [] })
+					} if (result.msg == "Token has expired"){
+						actions.logOut()
+					}
+					else {
 					}
 
 				} catch (error) {
@@ -985,6 +1302,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ confirmPassword: null })
 				setStore({ isActive: null })
 				setStore({ role: null })
+				setStore({ user: null })
 
 
 				setStore({ uid: null })
@@ -999,6 +1317,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ birthYear: null })
 				setStore({ gender: null })
 				setStore({ homeworld: null })
+				setStore({ character: null })
+				setStore({ characterEdit: null })
 
 				setStore({ diameter: null })
 				setStore({ rotationPeriod: null })
@@ -1060,8 +1380,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			handleDeleteModalDetails: () => {
 				const actions = getActions()
 				setStore({ showModalDetails: false })
-				setStore({ character: null })
-				setStore({ characterEdit: null })
 				actions.clearStore()
 			},
 			handleChange: (e) => {
