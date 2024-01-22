@@ -10,25 +10,29 @@
   border-radius: 1.5rem;
   box-shadow: 5px 5px 10px 1px #000000;
 }
-.img-form-login{
+
+.img-form-login {
   width: 10rem;
   height: 10rem;
 }
-.input-login{
+
+.input-login {
   background: transparent;
   border: none;
   border-bottom: 0.6px solid white;
   border-top: 0.2px solid grey;
   color: white;
 
-  &:focus{
+  &:focus {
     background: transparent;
     color: white;
   }
 }
-.fa-eye, .fa-eye-slash{
+
+.fa-eye,
+.fa-eye-slash {
   position: absolute;
   display: block;
   bottom: 1rem;
-  right: 1.3rem;  
+  right: 1.3rem;
 }
