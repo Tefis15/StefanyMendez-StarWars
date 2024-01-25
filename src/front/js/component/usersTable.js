@@ -32,14 +32,13 @@ export const UsersTable = ({ user }, ...props) => {
                         />
                     </div></td>
                 <td>
-
-                    <button className="btn btn-yellow  me-2 fw-bold" onClick={() => {
+                    <button className="btn btn-yellow  me-2 fw-bold mb-2" onClick={() => {
                         actions.getUserById(user.id)
                         actions.handleShowModal()
                     }}>
                         <i className="fa-solid fa-pen"></i>
                     </button>
-                    <button className="btn btn-trash  fw-bold"
+                    <button className="btn btn-trash fw-bold mb-2"
                         onClick={() =>
                             Swal.fire({
                                 title: 'Are you sure?',

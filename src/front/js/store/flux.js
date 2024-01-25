@@ -43,6 +43,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 			homeworld: null,
 
 			planets: [],
+			planet: null,
+			planetEdit: null,
 			diameter: null,
 			rotationPeriod: null,
 			orbitalPeriod: null,
@@ -233,7 +235,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 					})
 					const result = await response.json()
-					
+
 					if (result.msg == "ok") {
 						setStore({ user: result.User })
 					} else {
@@ -643,7 +645,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						})
 						const result2 = await response2.json()
 						setStore({ characterEdit: result2.People })
-						console.log(result2);
 					}
 				} catch (error) {
 					console.log(error + " Error in getPeopleById")
@@ -858,7 +859,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					}
 
 				} catch (error) {
-					console.log(error + " Error in addPeopleDeatils")
+					console.log(error + " Error in addPeopleDetails")
 				}
 			},
 			editPeopleDetails: async (uid) => {
@@ -947,11 +948,11 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					if (result.msg == "ok") {
 						setStore({ favoritesPeople: result.Results })
-						setStore({ favoritesPeople: [] })
-					} if (result.msg == "Token has expired"){
+					} else if (result.msg == "Token has expired") {
 						actions.logOut()
 					}
 					else {
+						setStore({ favoritesPeople: [] })
 					}
 
 				} catch (error) {
@@ -1031,6 +1032,338 @@ const getState = ({ getStore, getActions, setStore }) => {
 					setStore({ planets: result.Results })
 				} catch (error) {
 					console.log(error + " Error in getAllPlanets")
+				}
+			},
+			getPlanetsById: async (uid, type) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/planets/details/${uid}`, {
+						method: 'GET'
+					})
+					const result = await response.json()
+					console.log(result.Results);
+					setStore({ planet: result.Results })
+					if (type === "details") {
+						if (result.msg != "ok") {
+							setStore({ planet: null })
+							setStore({ showModalDetails: false })
+							Swal.fire({
+								icon: 'error',
+								text: result.message,
+								timer: 3000,
+								padding: "2em",
+								color: "#FFC107",
+								showConfirmButton: false,
+								background: `#000000
+						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+						no-repeat
+						`,
+								backdrop: `
+						rgba(0,0,123,0.4)
+						url("https://media2.giphy.com/media/jq0BlOhhKKv8tO9oOz/giphy.gif?cid=6c09b952u3u8dsur3de499ls2qzc1i2hzuummvnuay3h7a5j&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s")
+						right top 
+						no-repeat
+						`
+							})
+						}
+					} else if (type === "edit") {
+						const response2 = await fetch(process.env.BACKEND_URL + `/planets/${uid}`, {
+							method: 'GET'
+						})
+						const result2 = await response2.json()
+						setStore({ planetEdit: result2.Planets })
+
+					}
+				} catch (error) {
+					console.log(error + " Error in getPlanetsById")
+				}
+			},
+			addPlanets: async () => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let planets = {}
+					if (store.uid != null) {
+						planets.uid = store.uid
+						planets.url = `https://www.swapi.tech/api/planets/${store.uid}`
+					}
+					if (store.name != null) {
+						planets.name = store.name
+					}
+					const response = await fetch(process.env.BACKEND_URL + '/planets', {
+						method: 'POST',
+						body: JSON.stringify(planets),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.handleDeleteModal()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.Planets.uid} - ${result.Planets.name} was successfully added`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+							url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+							no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+							url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+							right top 
+							no-repeat`
+						})
+						actions.clearStore()
+					}
+					else {
+						actions.showSwalError(result.message)
+						actions.clearStore()
+					}
+				} catch (error) {
+					console.log(error + " Error in addPeople")
+				}
+			},
+			editPlanets: async (uid) => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let planets = {}
+
+					planets.name = store.name
+
+					const response = await fetch(process.env.BACKEND_URL + `/planets/${uid}`, {
+						method: 'PUT',
+						body: JSON.stringify(planets),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						actions.handleDeleteModalDetails()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.Planets.uid} - ${result.Planets.name} details was successfully edited`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+									url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+									no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+									url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+									right top 
+									no-repeat`
+						})
+					} else if (store.name != null) {
+						actions.editPlanets(uid)
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+				} catch (error) {
+					console.log(error + " Error in editPlanets")
+				}
+
+			},
+			deletePlanets: async (uid, name) => {
+				try {
+					const token = localStorage.getItem('jwt-token')
+
+					const response = await fetch(process.env.BACKEND_URL + `/planets/${uid}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						setStore({ deleted: true })
+						Swal.fire({
+							title: 'Deleted!',
+							text: `The planet ${name} was deleted`,
+							icon: 'success',
+							showConfirmButton: false,
+							color: '#FFFFFF',
+							background: `#000000
+						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+						no-repeat`,
+							timer: 3000,
+							backdrop: `
+						rgba(0,0,123,0.4)
+						url("https://i.pinimg.com/originals/96/ea/bc/96eabc812b02070e025cb41776b91803.gif")
+						right top 
+						no-repeat
+						`
+						})
+						setStore({ deleted: false })
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+				} catch (error) {
+					console.log(error + " Error in deletePeople")
+				}
+			},
+			addPlanetsDetails: async () => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let planetsDetails = {}
+					if (store.uid != null) {
+						planetsDetails.uid = store.uid
+					}
+					if (store.description != null) {
+						planetsDetails.description = store.description
+					}
+					if (store.diameter != null) {
+						planetsDetails.diameter = store.diameter
+					}
+					if (store.rotationPeriod != null) {
+						planetsDetails.rotation_period = store.rotationPeriod
+					}
+					if (store.orbitalPeriod != null) {
+						planetsDetails.orbital_period = store.orbitalPeriod
+					}
+					if (store.gravity != null) {
+						planetsDetails.gravity = store.gravity
+					}
+					if (store.population != null) {
+						planetsDetails.population = store.population
+					}
+					if (store.climate != null) {
+						planetsDetails.climate = store.climate
+					}
+					if (store.terrain != null) {
+						planetsDetails.terrain = store.terrain
+					}
+					if (store.surfaceWater != null) {
+						planetsDetails.surface_water = store.surfaceWater
+					}
+
+
+					const response = await fetch(process.env.BACKEND_URL + `/planets/details`, {
+						method: 'POST',
+						body: JSON.stringify(planetsDetails),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						actions.handleDeleteModalDetails()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.Planets_details.uid} - ${result.Planets_details.properties.name} details was successfully added`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+								url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+								no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+								url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+								right top 
+								no-repeat`
+						})
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in addPlanetsDetails")
+				}
+			},
+			editPlanetsDetails: async (uid) => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let planetsDetails = {}
+					if (store.uid != null) {
+						planetsDetails.uid = store.uid
+					}
+					if (store.description != null) {
+						planetsDetails.description = store.description
+					}
+					if (store.diameter != null) {
+						planetsDetails.diameter = store.diameter
+					}
+					if (store.rotationPeriod != null) {
+						planetsDetails.rotation_period = store.rotationPeriod
+					}
+					if (store.orbitalPeriod != null) {
+						planetsDetails.orbital_period = store.orbitalPeriod
+					}
+					if (store.gravity != null) {
+						planetsDetails.gravity = store.gravity
+					}
+					if (store.population != null) {
+						planetsDetails.population = store.population
+					}
+					if (store.climate != null) {
+						planetsDetails.climate = store.climate
+					}
+					if (store.terrain != null) {
+						planetsDetails.terrain = store.terrain
+					}
+					if (store.surfaceWater != null) {
+						planetsDetails.surface_water = store.surfaceWater
+					}
+
+					const response = await fetch(process.env.BACKEND_URL + `/planets/details/${uid}`, {
+						method: 'PUT',
+						body: JSON.stringify(planetsDetails),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.handleDeleteModalDetails()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.Planets_details.uid} - ${result.Planets_details.properties.name} details was successfully edited`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+								url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+								no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+								url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+								right top 
+								no-repeat`
+						})
+					} else if (store.name != null) {
+						actions.editPlanets(uid)
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+				} catch (error) {
+					console.log(error + " Error in editPlanetsDetails")
 				}
 			},
 			getPlanetsFavorites: async () => {
@@ -1310,6 +1643,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ url: null })
 				setStore({ description: null })
 
+				setStore({ character: null })
+				setStore({ characterEdit: null })
 				setStore({ height: null })
 				setStore({ mass: null })
 				setStore({ skinColor: null })
@@ -1320,6 +1655,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ character: null })
 				setStore({ characterEdit: null })
 
+				setStore({ planet: null })
+				setStore({ planetEdit: null })
 				setStore({ diameter: null })
 				setStore({ rotationPeriod: null })
 				setStore({ orbitalPeriod: null })
@@ -1369,7 +1706,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 			handleDeleteModal: () => {
 				const actions = getActions()
 				setStore({ showModal: false })
-				setStore({ character: null })
+
 				actions.clearStore()
 			},
 			handleShowModalDetails: () => {

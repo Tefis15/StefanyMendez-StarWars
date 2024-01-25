@@ -26,7 +26,7 @@ export const PeopleDetails = (...props) => {
                 </div>
                 <div className="col-lg-6 col-sm-auto my-auto">
                     <h1 className="mb-3 mt-2 text-warning">{!!store.character ? store.character.properties.name : "...Loading"}</h1>
-                    <p className="p-description ms-md-5 ms-sm-0 fs-5">Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. </p>
+                    <p className="p-description ms-md-5 ms-sm-0 fs-5">{!!store.character ? store.character.properties.description : "...Loading"}</p>
                 </div>
             </div>
             <hr className="text-warning" />

@@ -13,10 +13,9 @@ export const CardFavoritesVehicles = ({ favorite }, ...props) => {
 
     return (
         <>
-            <div className="">
                 <div className="card card-all">
                     <img src={`https://starwars-visualguide.com/assets/img/vehicles/${favorite.vehicles_uid.uid}.jpg`}
-                        className="card-img-top img-card-all" alt="..."
+                        className="card-img-top img-card-favorites" alt="..."
                         onError={({ currentTarget }) => {
                             currentTarget.onerror = null;
                             currentTarget.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg";
@@ -38,7 +37,6 @@ export const CardFavoritesVehicles = ({ favorite }, ...props) => {
 
                     </div>
                 </div>
-            </div>
         </>
     )
 }

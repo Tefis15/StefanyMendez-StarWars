@@ -14,7 +14,7 @@ import Signin from "./pages/signin";
 import ForgetPass from "./pages/forgetPass.js";
 import { Profile } from "./pages/profile.js";
 import { People } from "./pages/people.js";
-import { Planets } from "./pages/planets";
+import { Planets } from "./pages/planets.js";
 import { Vehicles } from "./pages/vehicles.js";
 import { Starships } from "./pages/starships.js";
 import PeopleDetails from "./pages/peopleDetails.js";
@@ -48,9 +48,9 @@ const Layout = () => {
                         <Route element={<Vehicles />} path="/vehicles" />
                         <Route element={<Starships />} path="/starships" />
                         <Route element={<PeopleDetails />} path="/people/details/:uid" />
-                        <Route element={<PlanetsDetails />} path="/planetsdetails" />
-                        <Route element={<StarshipsDetails />} path="/starshipsdetails" />
-                        <Route element={<VehiclesDetails />} path="/vehiclesdetails" />
+                        <Route element={<PlanetsDetails />} path="/planets/details/:uid" />
+                        <Route element={<StarshipsDetails />} path="/starships/details/:uid" />
+                        <Route element={<VehiclesDetails />} path="/vehicles/details/:uid" />
                         <Route element={<Favorites />} path="/favorites" />
                         <Route element={<Users/>} path="/users" />
                         <Route element={<h1>Not found!</h1>} />

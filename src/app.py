@@ -974,13 +974,17 @@ def delete_planets(planets_uid):
     
     planets_details = PlanetsDetails.query.filter_by(uid=planets_uid).first()
     people_details = PeopleDetails.query.filter_by(planet_uid=planets_uid)
-    
+    planets_favorites = PlanetsFavorites.query.filter_by(planets_uid=planets_uid) 
+
     for people in people_details:
-        people.planets_uid = ""
+        people.planet_uid = 0
         people.update()
     
     if planets_details:
         planets_details.delete()
+        
+    if planets_favorites:
+        planets_favorites.delete()
                
     planets.delete()
     
@@ -1057,7 +1061,7 @@ def add_details_planets():
     
     response_body = {
         "msg":"ok",
-        "Planets Details": planets_details.serialize()
+        "Planets_details": planets_details.serialize()
     }
     
     return jsonify(response_body), 200
