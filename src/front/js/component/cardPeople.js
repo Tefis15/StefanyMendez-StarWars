@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext } from "react";
 import '../../styles/people.css'
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types"

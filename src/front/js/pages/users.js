@@ -11,6 +11,7 @@ export const Users = () => {
 
     useEffect(() => {
         actions.getAllUsers()
+        !store.isLoggedIn || store.userLogin.role == "user" ? navigate('/login') : null
     }, [store.userEdited, store.showModal, store.deleted])
 
     return (
@@ -23,28 +24,30 @@ export const Users = () => {
                         Add New <i className="fa-solid fa-plus"></i>
                     </button>
                 </div>
-                <table className="table table-responsive fs-5">
-                    <thead>
-                        <tr>
-                            <th scope="col" className='text-center'>ID</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col" className='text-center'>Phone</th>
-                            <th scope="col" className='text-center'>Role</th>
-                            <th scope="col" className='text-center'>Active</th>
-                            <th scope="col">Actions</th>
+                <div className='table-responsive'>
+                    <table className="table fs-5">
+                        <thead>
+                            <tr>
+                                <th scope="col" className='text-center'>ID</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Email</th>
+                                <th scope="col" className='text-center'>Phone</th>
+                                <th scope="col" className='text-center'>Role</th>
+                                <th scope="col" className='text-center'>Active</th>
+                                <th scope="col">Actions</th>
 
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {!!store.users && store.users.map((user, index) => {
-                            return (
-                                <UsersTable key={index} user={user} />
-                            )
-                        })}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {!!store.users && store.users.map((user, index) => {
+                                return (
+                                    <UsersTable key={index} user={user} />
+                                )
+                            })}
 
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                </div>
             </div>
             <UserModal show={store.showModal} />
         </>

@@ -410,7 +410,7 @@ class PeopleDetails(db.Model):
     gender = db.Column(db.String(50)) 
     created = db.Column(db.DateTime(timezone=True), nullable=False)
     edited = db.Column(db.DateTime(timezone=True), nullable=False)
-    planet_uid = db.Column(db.Integer, db.ForeignKey(Planets.uid)) 
+    planet_uid = db.Column(db.Integer, db.ForeignKey(Planets.uid), nullable=False) 
     people = db.relationship(People)
     homeworld = db.relationship(Planets)
     

@@ -119,9 +119,13 @@ body {
     backdrop-filter: blur(8px);
     border-radius: 1rem;
     box-shadow: 5px 5px 10px 1px #000000;
-
 }
 
 .img-card-all {
     border-radius: 1rem;
+    height: 20rem;
+}
+.img-card-favorites{
+    border-radius: 1rem;
+    height: 22rem;
 }

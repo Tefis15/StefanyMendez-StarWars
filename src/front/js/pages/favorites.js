@@ -16,6 +16,8 @@ export const Favorites = () => {
        actions.getPlanetsFavorites()
        actions.getVehiclesFavorites()
        actions.getStarshipsFavorites()
+	   !store.isLoggedIn ? navigate('/login') : null
+
 
 	}, [store.deleted])
 

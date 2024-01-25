@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Context } from '../store/appContext'
 import PropTypes from "prop-types";
 
-export const PeopleDetailsModal = (...props) => {
+export const PlanetsDetailsModal = (...props) => {
 
     const { store, actions } = useContext(Context)
 
@@ -11,18 +11,18 @@ export const PeopleDetailsModal = (...props) => {
         <form className='modal' tabIndex="-1" style={{ display: store.showModalDetails ? "inline-block" : "none" }}
             onSubmit={e => {
                 e.preventDefault()
-                if(!!store.character){
-                    actions.editPeopleDetails(store.character.uid)
+                if(!!store.planet){
+                    actions.editPlanetsDetails(store.planet.uid)
                     e.target.reset()
                 }else{
-                    actions.addPeopleDetails()
+                    actions.addPlanetsDetails()
                     e.target.reset()
                 }
             }}>
             <div className="modal-dialog modal-dialog-centered p-1">
                 <div className="modal-content usersModalContent p-2">
                     <div className="modal-header">
-                        <h5 className="modal-title fw-bold text-white fs-4">People Details</h5>
+                        <h5 className="modal-title fw-bold text-white fs-4">Planets Details</h5>
                         <button type="reset" className="close btn btn-yellow fw-bold text-center fw-bold"
                             onClick={() => actions.handleDeleteModalDetails()}>
                             <i className="fa-solid fa-xmark"></i>
@@ -34,19 +34,19 @@ export const PeopleDetailsModal = (...props) => {
                             <div className="input-group group-user-modal mb-3 input-select">
                                 <select className="form-select select-modal" id="inputGroupRoles" onChange={actions.handleChange} name='uid'>
                                     <option className='option-modal' defaultValue="null">Select the Uid</option>
-                                    {!!store.character || store.characterEdit ?
+                                    {!!store.planet || store.planetEdit ?
                                         <option
                                             className='option-modal'
-                                            selected={!!store.character ? true : true}>
-                                            {!!store.character ? store.character.uid : store.characterEdit.uid} - {!!store.character ? store.character.properties.name : store.characterEdit.name}
+                                            selected={!!store.planet ? true : true}>
+                                            {!!store.planet ? store.planet.uid : store.planetEdit.uid} - {!!store.planet ? store.planet.properties.name : store.planetEdit.name}
                                         </option>
                                         :
-                                        !!store.people && store.people.map((character, index) => {
+                                        !!store.planets && store.planets.map((planet, index) => {
                                             return (
                                                 <option key={index}
                                                     className='option-modal'
-                                                    selected={!!store.character && store.character.uid == character.uid ? true : !!store.characterEdit && store.characterEdit.uid == character.uid ? true : false}
-                                                    value={character.uid}>{character.uid} - {character.name}
+                                                    selected={!!store.planet && store.planet.uid == planet.uid ? true : !!store.planetEdit && store.planetEdit.uid == planet.uid ? true : false}
+                                                    value={planet.uid}>{planet.uid} - {planet.name}
                                                 </option>
                                             )
                                         })
@@ -54,7 +54,7 @@ export const PeopleDetailsModal = (...props) => {
                                 </select>
                             </div>
                         </div>
-                        <div className="form-floating mb-3" hidden={!!store.character ? false : true}>
+                        <div className="form-floating mb-3" hidden={!!store.planet ? false : true}>
                             <input
                                 type="text"
                                 className="form-control input-modal"
@@ -62,18 +62,18 @@ export const PeopleDetailsModal = (...props) => {
                                 name='name'
                                 placeholder='Name'
                                 onChange={actions.handleChange}
-                                defaultValue={!!store.character ? store.character.properties.name : !!store.characterEdit ? store.characterEdit.name : ""}
+                                defaultValue={!!store.planet ? store.planet.properties.name : !!store.planetEdit ? store.planetEdit.name : ""}
                             />
                             <label className='text-warning' htmlFor="floatingInput">Name</label>
                         </div>
-                        <div className="form-floating mb-3" hidden={!!store.character ? false : true}>
+                        <div className="form-floating mb-3" hidden={!!store.planet ? false : true}>
                             <input
                                 type="text"
                                 className="form-control input-modal"
                                 id="url"
                                 name='url'
                                 placeholder='URL'
-                                defaultValue={!!store.character ? store.character.properties.url : !!store.characterEdit ? store.characterEdit.url : store.url}
+                                defaultValue={!!store.planet ? store.planet.properties.url : !!store.planetEdit ? store.planetEdit.url : store.url}
                                 readOnly />
                             <label className='text-warning' htmlFor="floatingInput">URL</label>
                         </div>
@@ -86,93 +86,98 @@ export const PeopleDetailsModal = (...props) => {
                                 name='description'
                                 rows="3"
                                 onChange={actions.handleChange}
-                                defaultValue={!!store.character ? store.character.description : ""} />
+                                defaultValue={!!store.planet ? store.planet.description : ""} />
                         </div>
                         <div className="form-floating mb-3">
                             <input
                                 type="number"
                                 className="form-control input-modal"
-                                id="height"
-                                name='height'
-                                placeholder='Height'
+                                id="diameter"
+                                name='diameter'
+                                placeholder='Diameter'
                                 onChange={actions.handleChange}
-                                defaultValue={!!store.character ? store.character.properties.height : ""} />
-                            <label className='text-warning' htmlFor="floatingInput">Height</label>
+                                defaultValue={!!store.planet ? store.planet.properties.diameter : ""} />
+                            <label className='text-warning' htmlFor="floatingInput">Diameter</label>
                         </div>
                         <div className="form-floating mb-3">
                             <input
                                 type="number"
                                 className="form-control input-modal"
-                                id="mass"
-                                name='mass'
-                                placeholder='Mass'
+                                id="rotationPeriod"
+                                name='rotationPeriod'
+                                placeholder='Rotation Period'
                                 onChange={actions.handleChange}
-                                defaultValue={!!store.character ? store.character.properties.mass : ""} />
-                            <label className='text-warning' htmlFor="floatingInput">Mass</label>
+                                defaultValue={!!store.planet ? store.planet.properties.rotation_period : ""} />
+                            <label className='text-warning' htmlFor="floatingInput">Rotation Period</label>
+                        </div>
+                        <div className="form-floating mb-3">
+                            <input
+                                type="number"
+                                className="form-control input-modal"
+                                id="orbitalPeriod"
+                                name='orbitalPeriod'
+                                placeholder='Orbital Period'
+                                onChange={actions.handleChange}
+                                defaultValue={!!store.planet ? store.planet.properties.orbital_period : ""} />
+                            <label className='text-warning' htmlFor="floatingInput">Orbital Period</label>
                         </div>
                         <div className="form-floating mb-3">
                             <input
                                 type="text"
                                 className="form-control input-modal"
-                                id="skinColor"
-                                name='skinColor'
-                                placeholder='Skin Color'
+                                id="gravity"
+                                name='gravity'
+                                placeholder='Gravity'
                                 onChange={actions.handleChange}
-                                defaultValue={!!store.character ? store.character.properties.skin_color : ""} />
-                            <label className='text-warning' htmlFor="floatingInput">Skin Color</label>
+                                defaultValue={!!store.planet ? store.planet.properties.gravity : ""} />
+                            <label className='text-warning' htmlFor="floatingInput">Gravity</label>
                         </div>
                         <div className="form-floating mb-3">
                             <input
                                 type="text"
                                 className="form-control input-modal"
-                                id="eyeColor"
-                                name='eyeColor'
-                                placeholder='Eye Color'
+                                id="population"
+                                name='population'
+                                placeholder='Population'
                                 onChange={actions.handleChange}
-                                defaultValue={!!store.character ? store.character.properties.eye_color : ""} />
-                            <label className='text-warning' htmlFor="floatingInput">Eye Color</label>
+                                defaultValue={!!store.planet ? store.planet.properties.population : ""} />
+                            <label className='text-warning' htmlFor="floatingInput">Population</label>
                         </div>
                         <div className="form-floating mb-3">
                             <input
                                 type="text"
                                 className="form-control input-modal"
-                                id="birthYear"
-                                name='birthYear'
-                                placeholder='Birth Year'
+                                id="climate"
+                                name='climate'
+                                placeholder='Climate'
                                 onChange={actions.handleChange}
-                                defaultValue={!!store.character ? store.character.properties.birth_year : ""} />
-                            <label className='text-warning' htmlFor="floatingInput">Birth Year</label>
+                                defaultValue={!!store.planet ? store.planet.properties.climate : ""} />
+                            <label className='text-warning' htmlFor="floatingInput">Climate</label>
                         </div>
                         <div className="form-floating mb-3">
                             <input
                                 type="text"
                                 className="form-control input-modal"
-                                id="gender"
-                                name='gender'
-                                placeholder='Gender'
+                                id="terrain"
+                                name='terrain'
+                                placeholder='Terrain'
                                 onChange={actions.handleChange}
-                                defaultValue={!!store.character ? store.character.properties.gender : ""} />
-                            <label className='text-warning' htmlFor="floatingInput">Gender</label>
+                                defaultValue={!!store.planet ? store.planet.properties.terrain : ""} />
+                            <label className='text-warning' htmlFor="floatingInput">Terrain</label>
                         </div>
-                        <div className="form-group mb-2">
-                            <label htmlFor="homeworld" className="modal-label-input text-warning">Homeworld</label>
-                            <div className="input-group group-user-modal mb-3 input-select">
-                                <select className="form-select select-modal" id="inputGroupRoles" onChange={actions.handleChange} name='homeworld'>
-                                    <option className='option-modal' defaultValue="null">Select the Homeworld</option>
-                                    {!!store.planets && store.planets.map((planet, index) => {
-                                        return (
-                                            <option key={index}
-                                                className='option-modal'
-                                                selected={!!store.character && store.character.properties.homeworld.uid == planet.uid ? true : false}
-                                                value={planet.uid}>
-                                                {planet.uid} - {planet.name}
-                                            </option>
-                                        )
-                                    })}
-                                </select>
-                            </div>
+                        <div className="form-floating mb-3">
+                            <input
+                                type="number"
+                                className="form-control input-modal"
+                                id="surfaceWater"
+                                name='surfaceWater'
+                                placeholder='Surface Water'
+                                onChange={actions.handleChange}
+                                defaultValue={!!store.planet ? store.planet.properties.surface_water : ""} />
+                            <label className='text-warning' htmlFor="floatingInput">Surface Water</label>
                         </div>
-                        <div className="form-floating mb-3" hidden={!!store.character ? false : true}>
+                        
+                        <div className="form-floating mb-3" hidden={!!store.planet ? false : true}>
                             <input
                                 type="text"
                                 className="form-control input-modal"
@@ -180,11 +185,11 @@ export const PeopleDetailsModal = (...props) => {
                                 name='created'
                                 placeholder='Created Date'
                                 readOnly
-                                defaultValue={!!store.character ? new Date(store.character.properties.created).toLocaleString() : ""}
+                                defaultValue={!!store.planet ? new Date(store.planet.properties.created).toLocaleString() : ""}
                             />
                             <label className='text-warning' htmlFor="floatingInput">Created Date</label>
                         </div>
-                        <div className="form-floating mb-3" hidden={!!store.character ? false : true}>
+                        <div className="form-floating mb-3" hidden={!!store.planet ? false : true}>
                             <input
                                 type="text"
                                 className="form-control input-modal"
@@ -192,7 +197,7 @@ export const PeopleDetailsModal = (...props) => {
                                 name='edited'
                                 placeholder='Edited Date'
                                 readOnly
-                                defaultValue={!!store.character ? new Date(store.character.properties.edited).toLocaleString()  : ""} />
+                                defaultValue={!!store.planet ? new Date(store.planet.properties.edited).toLocaleString()  : ""} />
                             <label className='text-warning' htmlFor="floatingInput">Edited Date</label>
                         </div>
 
@@ -210,9 +215,9 @@ export const PeopleDetailsModal = (...props) => {
         </form>
     )
 }
-PeopleDetailsModal.propTypes = {
+PlanetsDetailsModal.propTypes = {
     show: PropTypes.bool,
 }
-PeopleDetailsModal.defaultProps = {
+PlanetsDetailsModal.defaultProps = {
     show: false
 }

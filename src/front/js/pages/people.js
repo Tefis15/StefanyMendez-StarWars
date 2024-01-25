@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import '../../styles/people.css'
-import { useNavigate } from 'react-router-dom'
 import { Context } from '../store/appContext'
 import { CardPeople } from '../component/cardPeople'
 import { PeopleModal } from '../component/peopleModal'
@@ -8,7 +7,6 @@ import { PeopleModal } from '../component/peopleModal'
 
 export const People = () => {
 	const { store, actions } = useContext(Context);
-	const navigate = useNavigate()
 
 	useEffect(() => {
 		actions.getAllPeople()
