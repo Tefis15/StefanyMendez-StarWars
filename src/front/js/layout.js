@@ -52,7 +52,7 @@ const Layout = () => {
                         <Route element={<StarshipsDetails />} path="/starships/details/:uid" />
                         <Route element={<VehiclesDetails />} path="/vehicles/details/:uid" />
                         <Route element={<Favorites />} path="/favorites" />
-                        <Route element={<Users/>} path="/users" />
+                        <Route element={<Users />} path="/users" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
                     {/* <Footer /> */}

@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Context } from '../store/appContext'
 import PropTypes from "prop-types";
 
-export const PlanetsModal = (...props) => {
+export const VehiclesModal = (...props) => {
 
     const { store, actions } = useContext(Context)
 
@@ -11,13 +11,13 @@ export const PlanetsModal = (...props) => {
         <form className='modal' tabIndex="-1" style={{ display: store.showModal ? "inline-block" : "none" }}
             onSubmit={e => {
                 e.preventDefault()
-                actions.addPlanets()
+                actions.addVehicles()
                 e.target.reset()
             }}>
             <div className="modal-dialog modal-dialog-centered p-1">
                 <div className="modal-content usersModalContent p-2">
                     <div className="modal-header">
-                        <h5 className="modal-title fw-bold text-white fs-4">Planets</h5>
+                        <h5 className="modal-title fw-bold text-white fs-4">Vehicles</h5>
                         <button type="reset" className="close btn btn-yellow fw-bold text-center fw-bold"
                             onClick={() => actions.handleDeleteModal()}>
                             <i className="fa-solid fa-xmark"></i>
@@ -31,9 +31,9 @@ export const PlanetsModal = (...props) => {
                                 id="uid"
                                 name='uid'
                                 onChange={actions.handleChange}
-                                placeholder='Planets Uid'
+                                placeholder='Vehicle Uid'
                             />
-                            <label className='text-warning' htmlFor="floatingInput">Planet Uid</label>
+                            <label className='text-warning' htmlFor="floatingInput">Vehicle Uid</label>
                         </div>
                         <div className="form-floating mb-3">
                             <input
@@ -53,7 +53,7 @@ export const PlanetsModal = (...props) => {
                                 id="url"
                                 name='url'
                                 placeholder='URL'
-                                value={`https://www.swapi.tech/api/planets/${store.uid}`}
+                                value={`https://www.swapi.tech/api/vehicles/${store.uid}`}
                                 onChange={actions.handleChange}
                                 readOnly
                             />
@@ -73,9 +73,9 @@ export const PlanetsModal = (...props) => {
         </form>
     )
 }
-PlanetsModal.propTypes = {
+VehiclesModal.propTypes = {
     show: PropTypes.bool,
 }
-PlanetsModal.defaultProps = {
+VehiclesModal.defaultProps = {
     show: false
 }

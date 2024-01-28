@@ -1,5 +1,5 @@
 import "../../styles/planets.css";
-import React, { useContext, useEffect} from "react";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../store/appContext.js";
 import { useNavigate } from "react-router-dom";
 
@@ -24,7 +24,7 @@ export const PlanetsDetails = (...props) => {
                 </div>
                 <div className="col-lg-6 col-sm-auto my-auto">
                     <h1 className="mb-3 mt-2 text-warning">{!!store.planet ? store.planet.properties.name : "...Loading"}</h1>
-                    <p className="p-description ms-md-5 ms-sm-0 fs-5">{!!store.planet ? store.planet.properties.description : "...Loading"}</p>
+                    <p className="p-description ms-md-5 ms-sm-0 fs-5">{!!store.planet ? store.planet.description : "...Loading"}</p>
                 </div>
             </div>
             <hr className="text-warning" />

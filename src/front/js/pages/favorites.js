@@ -12,11 +12,11 @@ export const Favorites = () => {
 	const navigate = useNavigate()
 
 	useEffect(() => {
-       actions.getPeopleFavorites()
-       actions.getPlanetsFavorites()
-       actions.getVehiclesFavorites()
-       actions.getStarshipsFavorites()
-	   !store.isLoggedIn ? navigate('/login') : null
+		!store.isLoggedIn ? navigate('/login') : null
+		actions.getPeopleFavorites()
+		actions.getPlanetsFavorites()
+		actions.getVehiclesFavorites()
+		actions.getStarshipsFavorites()
 
 
 	}, [store.deleted])
@@ -29,22 +29,22 @@ export const Favorites = () => {
 				<div className="row row-cols-1 row-cols-md-4 row-cols-sm-1 row-cols-lg-6 g-3">
 					{!!store.favoritesPeople && store.favoritesPeople.map((favorite, index) => {
 						return (
-							<CardFavoritesPeople key={index} favorite={favorite}/>
+							<CardFavoritesPeople key={index} favorite={favorite} />
 						)
 					})}
 					{!!store.favoritesPlanets && store.favoritesPlanets.map((favorite, index) => {
 						return (
-							<CardFavoritesPlanets key={index} favorite={favorite}/>
+							<CardFavoritesPlanets key={index} favorite={favorite} />
 						)
 					})}
 					{!!store.favoritesVehicles && store.favoritesVehicles.map((favorite, index) => {
 						return (
-							<CardFavoritesVehicles key={index} favorite={favorite}/>
+							<CardFavoritesVehicles key={index} favorite={favorite} />
 						)
 					})}
 					{!!store.favoritesStarships && store.favoritesStarships.map((favorite, index) => {
 						return (
-							<CardFavoritesStarships key={index} favorite={favorite}/>
+							<CardFavoritesStarships key={index} favorite={favorite} />
 						)
 					})}
 				</div>
