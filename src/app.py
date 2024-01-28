@@ -1382,6 +1382,7 @@ def delete_vehicles(vehicles_uid):
     
     vehicles_details = VehiclesDetails.query.filter_by(uid=vehicles_uid).first()
     vehicles_people = VehiclesPeople.query.filter_by(people_uid=vehicles_uid)
+    vehicles_favorites = VehiclesFavorites.query.filter_by(vehicles_uid=vehicles_uid) 
 
            
     if vehicles_details:
@@ -1389,6 +1390,9 @@ def delete_vehicles(vehicles_uid):
                
     if vehicles_people:
         vehicles_people.delete()
+        
+    if vehicles_favorites:
+        vehicles_favorites.delete()
     
     vehicles.delete()
     
@@ -1636,7 +1640,7 @@ def add_vehicles_favorites():
     
     return jsonify(response_body), 200
    
-@app.route("/vehicles/favorites/<int:user_id>", methods=['DELETE'])
+@app.route("/vehicles/favorites", methods=['DELETE'])
 @jwt_required()
 def delete_vehicles_favorites():
     request_body = request.get_json(force=True, silent=True)
@@ -1890,12 +1894,17 @@ def delete_starships(starships_uid):
     
     starships_details = StarshipsDetails.query.filter_by(uid=starships_uid).first()
     starships_people = StarshipsPeople.query.filter_by(people_uid=starships_uid)
+    starships_favorites = StarshipFavorites.query.filter_by(starships_uid=starships_uid) 
+ 
      
     if starships_details:
         starships_details.delete()
                
     if starships_people:
         starships_people.delete()
+        
+    if starships_favorites:
+        starships_favorites.delete()
     
     starships.delete()
     
@@ -2152,7 +2161,7 @@ def add_starships_favorites():
     
     return jsonify(response_body), 200
    
-@app.route("/starships/favorites/<int:user_id>", methods=['DELETE'])
+@app.route("/starships/favorites", methods=['DELETE'])
 @jwt_required()
 def delete_starships_favorites():
     request_body = request.get_json(force=True, silent=True)

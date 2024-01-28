@@ -26,7 +26,7 @@ export const PeopleDetails = (...props) => {
                 </div>
                 <div className="col-lg-6 col-sm-auto my-auto">
                     <h1 className="mb-3 mt-2 text-warning">{!!store.character ? store.character.properties.name : "...Loading"}</h1>
-                    <p className="p-description ms-md-5 ms-sm-0 fs-5">{!!store.character ? store.character.properties.description : "...Loading"}</p>
+                    <p className="p-description ms-md-5 ms-sm-0 fs-5">{!!store.character ? store.character.description : "...Loading"}</p>
                 </div>
             </div>
             <hr className="text-warning" />

@@ -12,7 +12,6 @@ export const CardPeople = ({ character }, ...props) => {
 
     return (
         <>
-            <div className="">
                 <div className="card card-all h-100">
                     <img src={`https://starwars-visualguide.com/assets/img/characters/${character.uid}.jpg`}
                         className="card-img-top img-card-all h-100" alt="..."
@@ -50,7 +49,7 @@ export const CardPeople = ({ character }, ...props) => {
                         </i>
                     </button>
                     <div className="card-body text-center">
-                        <h3 className="card-title text-white text-start">{character.name}</h3>
+                        <h4 className="card-title text-white text-start">{character.name}</h4>
                         <button className="btn btn-yellow mt-4 me-2 fw-bold">
                             <Link className="link text-decoration-none text-dark"
                                 to={`/people/details/${character.uid}`}
@@ -91,7 +90,6 @@ export const CardPeople = ({ character }, ...props) => {
                         </button>
                     </div>
                 </div>
-            </div>
             <PeopleModal show={store.showModal} />
             <PeopleDetailsModal show={store.showModalDetails} />
         </>

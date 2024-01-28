@@ -54,11 +54,13 @@ const getState = ({ getStore, getActions, setStore }) => {
 			terrain: null,
 			surfaceWater: null,
 
-
+			vehicles: [],
+			vehicle: null,
+			vehicleEdit: null,
 			model: null,
 			class: null,
 			manufacturer: null,
-			constInCredits: null,
+			costInCredits: null,
 			length: null,
 			crew: null,
 			passengers: null,
@@ -66,7 +68,9 @@ const getState = ({ getStore, getActions, setStore }) => {
 			cargoCapacity: null,
 			consumables: null,
 
-
+			starships: [],
+			starship: null,
+			starshipEdit: null,
 			hyperdrive: null,
 			mglt: null,
 
@@ -1040,7 +1044,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 						method: 'GET'
 					})
 					const result = await response.json()
-					console.log(result.Results);
 					setStore({ planet: result.Results })
 					if (type === "details") {
 						if (result.msg != "ok") {
@@ -1124,7 +1127,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						actions.clearStore()
 					}
 				} catch (error) {
-					console.log(error + " Error in addPeople")
+					console.log(error + " Error in addPlanets")
 				}
 			},
 			editPlanets: async (uid) => {
@@ -1214,7 +1217,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						actions.showSwalError(result.message)
 					}
 				} catch (error) {
-					console.log(error + " Error in deletePeople")
+					console.log(error + " Error in deletePlanets")
 				}
 			},
 			addPlanetsDetails: async () => {
@@ -1299,9 +1302,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const token = localStorage.getItem('jwt-token')
 
 					let planetsDetails = {}
-					if (store.uid != null) {
-						planetsDetails.uid = store.uid
-					}
+
 					if (store.description != null) {
 						planetsDetails.description = store.description
 					}
@@ -1452,7 +1453,362 @@ const getState = ({ getStore, getActions, setStore }) => {
 				}
 			},
 
-			//<---------------------------Vehciles------------------------------>//
+			//<---------------------------Vehicles------------------------------>//
+			getAllVehicles: async () => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + '/vehicles', {
+						method: 'GET'
+					})
+					const result = await response.json()
+
+					setStore({ vehicles: result.Results })
+				} catch (error) {
+					console.log(error + " Error in getAllVehicles")
+				}
+			},
+			getVehiclesById: async (uid, type) => {
+				try {
+					const response = await fetch(process.env.BACKEND_URL + `/vehicles/details/${uid}`, {
+						method: 'GET'
+					})
+					const result = await response.json()
+					setStore({ vehicle: result.Results })
+					if (type === "details") {
+						if (result.msg != "ok") {
+							setStore({ vehicle: null })
+							setStore({ showModalDetails: false })
+							Swal.fire({
+								icon: 'error',
+								text: result.message,
+								timer: 3000,
+								padding: "2em",
+								color: "#FFC107",
+								showConfirmButton: false,
+								background: `#000000
+						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+						no-repeat
+						`,
+								backdrop: `
+						rgba(0,0,123,0.4)
+						url("https://media2.giphy.com/media/jq0BlOhhKKv8tO9oOz/giphy.gif?cid=6c09b952u3u8dsur3de499ls2qzc1i2hzuummvnuay3h7a5j&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s")
+						right top 
+						no-repeat
+						`
+							})
+						}
+					} else if (type === "edit") {
+						const response2 = await fetch(process.env.BACKEND_URL + `/vehicles/${uid}`, {
+							method: 'GET'
+						})
+						const result2 = await response2.json()
+						setStore({ vehicleEdit: result2.Vehicles })
+
+					}
+				} catch (error) {
+					console.log(error + " Error in getVehiclesById")
+				}
+			},
+			addVehicles: async () => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let vehicles = {}
+					if (store.uid != null) {
+						vehicles.uid = store.uid
+						vehicles.url = `https://www.swapi.tech/api/vehicles/${store.uid}`
+					}
+					if (store.name != null) {
+						vehicles.name = store.name
+					}
+					const response = await fetch(process.env.BACKEND_URL + '/vehicles', {
+						method: 'POST',
+						body: JSON.stringify(vehicles),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+					if (result.msg == "ok") {
+						actions.handleDeleteModal()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.Vehicles.uid} - ${result.Vehicles.name} was successfully added`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+							url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+							no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+							url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+							right top 
+							no-repeat`
+						})
+						actions.clearStore()
+					}
+					else {
+						actions.showSwalError(result.message)
+						actions.clearStore()
+					}
+				} catch (error) {
+					console.log(error + " Error in addVehicles")
+				}
+			},
+			editVehicles: async (uid) => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let vehicles = {}
+
+					vehicles.name = store.name
+
+					const response = await fetch(process.env.BACKEND_URL + `/vehicles/${uid}`, {
+						method: 'PUT',
+						body: JSON.stringify(vehicles),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						actions.handleDeleteModalDetails()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.Vehicles.uid} - ${result.Vehicles.name} details was successfully edited`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+									url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+									no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+									url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+									right top 
+									no-repeat`
+						})
+					} else if (store.name != null) {
+						actions.editVehicles(uid)
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+				} catch (error) {
+					console.log(error + " Error in editVehicles")
+				}
+
+			},
+			deleteVehicles: async (uid, name) => {
+				try {
+					const token = localStorage.getItem('jwt-token')
+
+					const response = await fetch(process.env.BACKEND_URL + `/vehicles/${uid}`, {
+						method: 'DELETE',
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						setStore({ deleted: true })
+						Swal.fire({
+							title: 'Deleted!',
+							text: `The vehicle ${name} was deleted`,
+							icon: 'success',
+							showConfirmButton: false,
+							color: '#FFFFFF',
+							background: `#000000
+						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+						no-repeat`,
+							timer: 3000,
+							backdrop: `
+						rgba(0,0,123,0.4)
+						url("https://i.pinimg.com/originals/96/ea/bc/96eabc812b02070e025cb41776b91803.gif")
+						right top 
+						no-repeat
+						`
+						})
+						setStore({ deleted: false })
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+				} catch (error) {
+					console.log(error + " Error in deleteVehicle")
+				}
+			},
+			addVehiclesDetails: async () => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let vehiclesDetails = {}
+					if (store.uid != null) {
+						vehiclesDetails.uid = store.uid
+					}
+					if (store.description != null) {
+						vehiclesDetails.description = store.description
+					}
+					if (store.model != null) {
+						vehiclesDetails.model = store.model
+					}
+					if (store.class != null) {
+						vehiclesDetails.vehicle_class = store.class
+					}
+					if (store.manufacturer != null) {
+						vehiclesDetails.manufacturer = store.manufacturer
+					}
+					if (store.costInCredits != null) {
+						vehiclesDetails.cost_in_credits = store.costInCredits
+					}
+					if (store.length != null) {
+						vehiclesDetails.length = store.length
+					}
+					if (store.crew != null) {
+						vehiclesDetails.crew = store.crew
+					}
+					if (store.passengers != null) {
+						vehiclesDetails.passengers = store.passengers
+					}
+					if (store.maxAtmospheringSpeed != null) {
+						vehiclesDetails.max_atmosphering_speed = store.maxAtmospheringSpeed
+					}
+					if (store.cargoCapacity != null) {
+						vehiclesDetails.cargo_capacity = store.cargoCapacity
+					}
+					if (store.consumables != null) {
+						vehiclesDetails.consumables = store.consumables
+					}
+
+					const response = await fetch(process.env.BACKEND_URL + `/vehicles/details`, {
+						method: 'POST',
+						body: JSON.stringify(vehiclesDetails),
+						headers: {
+							'Content-Type': 'application/json',
+							'Authorization': 'Bearer ' + token
+						}
+					})
+					const result = await response.json()
+
+					if (result.msg == "ok") {
+						actions.handleDeleteModalDetails()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.Vehicles_details.uid} - ${result.Vehicles_details.properties.name} details was successfully added`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+								url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+								no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+								url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+								right top 
+								no-repeat`
+						})
+					}
+					else {
+						actions.showSwalError(result.message)
+					}
+
+				} catch (error) {
+					console.log(error + " Error in addVehiclesDetails")
+				}
+			},
+			editVehiclesDetails: async (uid) => {
+				try {
+					const store = getStore()
+					const actions = getActions()
+					const token = localStorage.getItem('jwt-token')
+
+					let vehiclesDetails = {}
+
+					if (store.description != null) {
+						vehiclesDetails.description = store.description
+					}
+					if (store.model != null) {
+						vehiclesDetails.model = store.model
+					}
+					if (store.class != null) {
+						vehiclesDetails.vehicle_class = store.class
+					}
+					if (store.manufacturer != null) {
+						vehiclesDetails.manufacturer = store.manufacturer
+					}
+					if (store.costInCredits != null) {
+						vehiclesDetails.cost_in_credits = store.costInCredits
+					}
+					if (store.length != null) {
+						vehiclesDetails.length = store.length
+					}
+					if (store.crew != null) {
+						vehiclesDetails.crew = store.crew
+					}
+					if (store.passengers != null) {
+						vehiclesDetails.passengers = store.passengers
+					}
+					if (store.maxAtmospheringSpeed != null) {
+						vehiclesDetails.max_atmosphering_speed = store.maxAtmospheringSpeed
+					}
+					if (store.cargoCapacity != null) {
+						vehiclesDetails.cargo_capacity = store.cargoCapacity
+					}
+					if (store.consumables != null) {
+						vehiclesDetails.consumables = store.consumables
+					}
+					if (vehiclesDetails != {}) {
+
+						const response = await fetch(process.env.BACKEND_URL + `/vehicles/details/${uid}`, {
+							method: 'PUT',
+							body: JSON.stringify(vehiclesDetails),
+							headers: {
+								'Content-Type': 'application/json',
+								'Authorization': 'Bearer ' + token
+							}
+						})
+						const result = await response.json()
+						if (result.msg == "ok") {
+							actions.handleDeleteModalDetails()
+							Swal.fire({
+								title: "Do it!!!",
+								text: `${result.Vehicles_details.uid} - ${result.Vehicles_details.properties.name} details was successfully edited`,
+								timer: 3000,
+								padding: "2em",
+								color: "#FFC107",
+								showConfirmButton: false,
+								background: `#000000
+							url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+							no-repeat`,
+								backdrop: `rgba(0,0,123,0.4)
+							url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+							right top 
+							no-repeat`
+							})
+						} else if (store.name != null) {
+							actions.editVehicles(uid)
+						}
+						else {
+							actions.showSwalError(result.message)
+						}
+					}
+
+				} catch (error) {
+					console.log(error + " Error in editVehiclesDetails")
+				}
+			},
 			getVehiclesFavorites: async () => {
 
 				try {
@@ -1517,7 +1873,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					favorite.vehicles_uid = uid
 
-					const response = await fetch(process.env.BACKEND_URL + `/vehicles/favorites/${uid}`, {
+					const response = await fetch(process.env.BACKEND_URL + `/vehicles/favorites`, {
 						method: 'DELETE',
 						body: JSON.stringify(favorite),
 						headers: {
@@ -1666,10 +2022,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ terrain: null })
 				setStore({ surfaceWater: null })
 
+				setStore({ vehicle: null })
+				setStore({ vehicleEdit: null })
 				setStore({ model: null })
 				setStore({ class: null })
 				setStore({ manufacturer: null })
-				setStore({ constInCredits: null })
+				setStore({ costInCredits: null })
 				setStore({ length: null })
 				setStore({ crew: null })
 				setStore({ passengers: null })
@@ -1677,6 +2035,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ cargoCapacity: null })
 				setStore({ consumables: null })
 
+				setStore({ starship: null })
+				setStore({ starshipEdit: null })
 				setStore({ hyperdrive: null })
 				setStore({ mglt: null })
 
@@ -1699,19 +2059,14 @@ const getState = ({ getStore, getActions, setStore }) => {
 				})
 			},
 			handleShowModal: () => {
-				const store = getStore()
-				const actions = getActions()
 				setStore({ showModal: true })
 			},
 			handleDeleteModal: () => {
 				const actions = getActions()
 				setStore({ showModal: false })
-
 				actions.clearStore()
 			},
 			handleShowModalDetails: () => {
-				const store = getStore()
-				const actions = getActions()
 				setStore({ showModalDetails: true })
 			},
 			handleDeleteModalDetails: () => {
