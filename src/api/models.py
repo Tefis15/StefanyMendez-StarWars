@@ -3,9 +3,6 @@ import enum
 
 db = SQLAlchemy()
 
-
-#Agregar def __repr__(self): en los favoritos y en vehiclesPeople y starshipsPeople
-
 class role(enum.Enum):
     admin = "admin"
     user = "user"
@@ -74,13 +71,13 @@ class Starships(db.Model):
 class StarshipsDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey(Starships.uid), unique=True, nullable=False)
-    description = db.Column(db.String(500)) 
+    description = db.Column(db.String(1000)) 
     model = db.Column(db.String(100)) 
     starship_class = db.Column(db.String(50)) 
     manufacturer = db.Column(db.String(50))
     cost_in_credits = db.Column(db.String(50))
     length = db.Column(db.Float)
-    crew = db.Column(db.Float) 
+    crew = db.Column(db.String(50)) 
     passengers = db.Column(db.Integer) 
     max_atmosphering_speed = db.Column(db.Float) 
     hyperdrive_rating = db.Column(db.Float) 
@@ -137,6 +134,9 @@ class StarshipFavorites (db.Model):
     user = db.relationship(User) 
     starships = db.relationship(Starships) 
     
+    def __repr__(self):
+        return f'<Starships {self.starships.name}>'
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -185,7 +185,7 @@ class Vehicles(db.Model):
 class VehiclesDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey(Vehicles.uid), unique=True, nullable=False)
-    description = db.Column(db.String(500)) 
+    description = db.Column(db.String(1000)) 
     model = db.Column(db.String(100)) 
     vehicle_class = db.Column(db.String(50)) 
     manufacturer = db.Column(db.String(50))
@@ -244,6 +244,9 @@ class VehiclesFavorites (db.Model):
     user = db.relationship(User) 
     vehicles = db.relationship(Vehicles) 
     
+    def __repr__(self):
+        return f'<Vehicles {self.vehicles.name}>'
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -292,7 +295,7 @@ class Planets(db.Model):
 class PlanetsDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey(Planets.uid), unique=True, nullable=False)
-    description = db.Column(db.String(500)) 
+    description = db.Column(db.String(1000)) 
     diameter = db.Column(db.Float)
     rotation_period = db.Column(db.Float)   
     orbital_period = db.Column(db.Float)
@@ -304,7 +307,6 @@ class PlanetsDetails(db.Model):
     created = db.Column(db.DateTime(timezone=True), nullable=False)
     edited = db.Column(db.DateTime(timezone=True), nullable=False)
     planets = db.relationship(Planets)
-
 
     def __repr__(self):
         return f'<Planets Details {self.planets.name}'
@@ -347,6 +349,9 @@ class PlanetsFavorites (db.Model):
     planets_uid = db.Column(db.Integer, db.ForeignKey(Planets.uid), nullable=False)
     user = db.relationship(User) 
     planets = db.relationship(Planets) 
+    
+    def __repr__(self):
+        return f'<Planets {self.planets.name}>'
     
     def serialize(self):
         return {
@@ -396,7 +401,7 @@ class People(db.Model):
 class PeopleDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey(People.uid), unique=True, nullable=False)
-    description = db.Column(db.String(500)) 
+    description = db.Column(db.String(1000)) 
     height = db.Column(db.Float)
     mass = db.Column(db.Float)   
     skin_color = db.Column(db.String(50))
@@ -405,7 +410,7 @@ class PeopleDetails(db.Model):
     gender = db.Column(db.String(50)) 
     created = db.Column(db.DateTime(timezone=True), nullable=False)
     edited = db.Column(db.DateTime(timezone=True), nullable=False)
-    planet_uid = db.Column(db.Integer, db.ForeignKey(Planets.uid)) 
+    planet_uid = db.Column(db.Integer, db.ForeignKey(Planets.uid), nullable=False) 
     people = db.relationship(People)
     homeworld = db.relationship(Planets)
     
@@ -426,11 +431,11 @@ class PeopleDetails(db.Model):
                         "homeworld": self.homeworld.serialize(),
                         "name": self.people.name,
                          "url": self.people.url
-            },
-            "uid": self.people.uid,  
-            "id": self.id, 
-            "description": self.description
-        } 
+                },
+                "uid": self.people.uid,  
+                "id": self.id, 
+                "description": self.description
+            } 
         
     def save(self):
         db.session.add(self)
@@ -449,6 +454,9 @@ class PeopleFavorites (db.Model):
     people_uid = db.Column(db.Integer, db.ForeignKey(People.uid), nullable=False)
     user = db.relationship(User) 
     people = db.relationship(People) 
+    
+    def __repr__(self):
+        return f'<People {self.people.name}>'   
     
     def serialize(self):
         return {
@@ -475,11 +483,14 @@ class VehiclesPeople(db.Model):
     people = db.relationship(People) 
     vehicles = db.relationship(Vehicles) 
     
+    def __repr__(self):
+        return f'<Vehicles People {self.vehicles.name} {self.people.name}>'
+    
     def serialize(self):
         return {
             "id": self.id,
             "people_uid": self.people.serialize(),
-            "vehicles_id": self.vehicles.serialize(),
+            "vehicles_uid": self.vehicles.serialize(),
         }
     
     def save(self):
@@ -500,11 +511,14 @@ class StarshipsPeople(db.Model):
     people = db.relationship(People) 
     starships = db.relationship(Starships) 
     
+    def __repr__(self):
+        return f'<Starships People {self.starships.name} {self.people.name}>'
+    
     def serialize(self):
         return {
             "id": self.id,
             "people_uid": self.people.serialize(),
-            "starships_id": self.starships.serialize(),
+            "starships_uid": self.starships.serialize(),
         }
     
     def save(self):

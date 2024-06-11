@@ -1,3 +1,159 @@
 /* 
     General Styles used on every website (Don't Repeat Yourself)
 */
+body {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 1)), url("https://fondosmil.com/fondo/81725.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    background-position: center;
+    font-family: 'Ysabeau SC', sans-serif;
+}
+
+.navbar {
+    background: black;
+}
+
+.logo-nav {
+    width: 5rem;
+    height: 3rem;
+}
+
+.nav-link {
+    color: #FFC107;
+
+    &:hover {
+        color: #2225be;
+        -webkit-transform: translateY(-0.25em);
+        transform: translateY(-0.25em);
+    }
+}
+
+.modal-content {
+    background-color: #000000;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 1)), url("https://w0.peakpx.com/wallpaper/365/498/HD-wallpaper-star-wars-black-amoled.jpg");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-position: center;
+}
+
+.input-modal {
+    background: transparent;
+    border: none;
+    border-bottom: 0.6px solid white;
+    border-top: 0.2px solid grey;
+    color: white;
+
+    &:focus {
+        background: transparent;
+        color: white;
+    }
+
+    &:read-only {
+        background: transparent;
+        color: #FFC107
+    }
+}
+.nav-span {
+    font-size: 1.3rem;
+    font-weight: 900;
+}
+
+.badge {
+    font-size: 1.1rem;
+}
+
+.btn-yellow {
+    color: black;
+    background-color: #FFC107;
+
+    &:hover {
+        box-shadow: 0 12px 16px 0 rgba(2, 82, 173, 0.377), 0 17px 50px 0 rgba(23, 105, 199, 0.377);
+    }
+
+    &:active {
+        -webkit-transform: translateY(0.25em);
+        transform: translateY(0.25em);
+    }
+}
+
+.btn-trash {
+    color: white;
+    background-color: red;
+
+    &:hover {
+        box-shadow: 0 12px 16px 0 rgba(2, 82, 173, 0.377), 0 17px 50px 0 rgba(23, 105, 199, 0.377);
+    }
+
+    &:active {
+        -webkit-transform: translateY(0.25em);
+        transform: translateY(0.25em);
+    }
+}
+
+.text-yellow {
+    color: #FFC107;
+
+    &:hover {
+        color: #2225be;
+    }
+}
+
+.go-top-btn {
+    position: fixed;
+    background-color: #FFC107;
+    bottom: 35px;
+    right: 35px;
+    cursor: pointer;
+    padding: 1rem;
+}
+
+.foo {
+    margin-top: auto;
+}
+
+.card-all {
+    background: rgba(0, 0, 0, 0.2);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border-radius: 1rem;
+    box-shadow: 5px 5px 10px 1px #000000;
+}
+
+.img-card-all {
+    border-radius: 1rem;
+    height: 20rem;
+}
+.img-card-favorites{
+    border-radius: 1rem;
+    height: 22rem;
+}
+.div-search{
+    position: relative;
+    width: 30rem;
+
+}
+.input-search {
+    background: rgba(0, 0, 0, 0.2);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 5px 5px 10px 1px #000000;
+
+    &:focus {
+        background: transparent;
+        color: white;
+    }
+  }
+  .input-search::placeholder{
+    color: #FFC107;
+  }
+  
+  .fa-magnifying-glass {
+    position: absolute;
+    display: block;
+    bottom: .8rem;
+    right: 2.4rem;
+    color: #FFC107;
+  }

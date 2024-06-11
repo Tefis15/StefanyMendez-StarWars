@@ -1,0 +1,41 @@
+.container-profile {
+  background: rgba(0, 0, 0, 0.2);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  margin: auto;
+  margin-top: 5rem;
+  margin-bottom: 15rem;
+  border-radius: 1.5rem;
+  box-shadow: 5px 5px 10px 1px #000000;
+}
+
+.img-form-profile {
+  width: 20rem;
+  height: 14rem;
+}
+
+.input-profile {
+  background: transparent;
+  border: none;
+  border-bottom: 0.6px solid white;
+  border-top: 0.2px solid grey;
+  color: white;
+
+  &:focus {
+    background: transparent;
+    color: white;
+  }
+
+  &:read-only {
+    background: transparent;
+    color: #FFC107
+  }
+}
+
+.fa-eye,
+.fa-eye-slash {
+  position: absolute;
+  display: block;
+  bottom: 1rem;
+  right: 1.3rem;
+}
