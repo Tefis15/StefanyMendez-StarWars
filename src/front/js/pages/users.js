@@ -10,9 +10,9 @@ export const Users = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        !store.isLoggedIn || store.userLogin.role == "user" ? navigate('/login') : null
         actions.getAllUsers()
-    }, [store.userEdited, store.showModal, store.deleted, store.isLoggedIn])
+        !store.isLoggedIn || store.userLogin.role == "user" ? navigate('/login') : null
+    }, [store.userEdited, store.showModal, store.deleted])
 
     return (
         <>

@@ -8,15 +8,15 @@ export const VehiclesDetails = (...props) => {
 
     const { store, actions } = useContext(Context);
     const navigate = useNavigate()
-    !!store.vehicle ? null : navigate('/vehicles')
-    
+
     useEffect(() => {
+        !!store.vehicle ? null : navigate('/vehicles')
     }, [store.vehicle])
     return (
         <div className="container-fluid mt-5">
             <div className="row justify-content-center">
                 <div className="col-lg-4 col-sm-12">
-                    <img className="img-fluid rounded" src={`https://starwars-visualguide.com/assets/img/vehicles/${!!store.vehicle ? store.vehicle.uid : "...Loading"}.jpg `}
+                    <img className="img-fluid rounded" src={`https://starwars-visualguide.com/assets/img/ vehicles/${!!store.vehicle ? store.vehicle.uid : "...Loading"}.jpg `}
                         onError={({ currentTarget }) => {
                             currentTarget.onerror = null; // prevents looping
                             currentTarget.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg";

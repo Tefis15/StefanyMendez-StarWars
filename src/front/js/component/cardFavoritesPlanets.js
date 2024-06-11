@@ -50,7 +50,7 @@ export const CardFavoritesPlanets = ({ favorite }, ...props) => {
                     <button className="btn btn-yellow mt-4 me-2 fw-bold">
                         <Link className="link text-decoration-none text-dark"
                             to={`/planets/details/${favorite.planets_uid.uid}`}
-                            onClick={() => actions.getPlanetsById(favorite.planets_uid.uid)}>
+                            onClick={() => actions.getPlanetsById(favorite.planets_uid.uid, "details")}>
                             Details
                         </Link>
                     </button>

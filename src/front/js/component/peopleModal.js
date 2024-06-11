@@ -8,17 +8,12 @@ export const PeopleModal = (...props) => {
 
     return (
 
-        <form className='modal' tabIndex="-1" style={{ display: store.showModal ? "inline-block" : "none" }}
-            onSubmit={e => {
+        <form className='modal' tabIndex="-1" style={{ display: store.showModal ? "inline-block" : "none" }} 
+        onSubmit={e => {
                 e.preventDefault()
                 actions.addPeople()
                 e.target.reset()
-            }}
-            onKeyDown={e => {
-                if (e.key == "Escape") {
-                    actions.handleDeleteModal()
-                }
-            }}>
+        }}>
             <div className="modal-dialog modal-dialog-centered p-1">
                 <div className="modal-content usersModalContent p-2">
                     <div className="modal-header">

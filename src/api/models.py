@@ -71,13 +71,13 @@ class Starships(db.Model):
 class StarshipsDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey(Starships.uid), unique=True, nullable=False)
-    description = db.Column(db.String(1000)) 
+    description = db.Column(db.String(500)) 
     model = db.Column(db.String(100)) 
     starship_class = db.Column(db.String(50)) 
     manufacturer = db.Column(db.String(50))
     cost_in_credits = db.Column(db.String(50))
     length = db.Column(db.Float)
-    crew = db.Column(db.String(50)) 
+    crew = db.Column(db.Float) 
     passengers = db.Column(db.Integer) 
     max_atmosphering_speed = db.Column(db.Float) 
     hyperdrive_rating = db.Column(db.Float) 
@@ -185,7 +185,7 @@ class Vehicles(db.Model):
 class VehiclesDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey(Vehicles.uid), unique=True, nullable=False)
-    description = db.Column(db.String(1000)) 
+    description = db.Column(db.String(500)) 
     model = db.Column(db.String(100)) 
     vehicle_class = db.Column(db.String(50)) 
     manufacturer = db.Column(db.String(50))
@@ -295,7 +295,7 @@ class Planets(db.Model):
 class PlanetsDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey(Planets.uid), unique=True, nullable=False)
-    description = db.Column(db.String(1000)) 
+    description = db.Column(db.String(500)) 
     diameter = db.Column(db.Float)
     rotation_period = db.Column(db.Float)   
     orbital_period = db.Column(db.Float)
@@ -401,7 +401,7 @@ class People(db.Model):
 class PeopleDetails(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey(People.uid), unique=True, nullable=False)
-    description = db.Column(db.String(1000)) 
+    description = db.Column(db.String(500)) 
     height = db.Column(db.Float)
     mass = db.Column(db.Float)   
     skin_color = db.Column(db.String(50))
