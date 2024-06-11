@@ -1,0 +1,19 @@
+.table {
+    background: rgba(0, 0, 0, 0.2);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+}
+
+th {
+    color: #FFC107;
+}
+
+tr:hover td,
+tr:hover td .row-table {
+    background-color: #17064770;
+    font-weight: bold;
+}
+
+td {
+    color: white;
+}
