@@ -29,7 +29,7 @@ const Login = () => {
                         placeholder="name@example.com"
                         name='email'
                         onChange={actions.handleChange} />
-                    <label className='text-warning' htmlFor="floatingInput">Email address</label>
+                    <label className='text-warning' htmlFor="floatingInput">Email Address</label>
                 </div>
                 <div className="form-floating d-flex position-relative align-items-center">
                     <input
