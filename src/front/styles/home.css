@@ -1,69 +1,7 @@
-.text-welcome {
-    position: relative;
-    color: white;
-    font-size: 5rem;
-    text-align: center;
-    font-weight: 900;
-    font-family: 'Potta One', serif;
-    text-shadow: 3px 6px 1px #111499;
-}
+/*
+    home.css: This website contains selectors only used in home.css
 
-.title-home {
-    color: #FFC107;
-    max-width: fit-content;
-    padding: 0.6rem;
-    border-radius: 0.4rem;
-    position: relative;
-}
-
-.author-phrases {
-    color: white;
-    font-size: 4rem;
-    font-weight: 700;
-    text-shadow: 1px 3px 1px #FFC107;
-}
-
-.text-phrases {
-    background: transparent;
-    backdrop-filter: blur(20px);
-    border-radius: 2rem;
-    font-size: 1.5rem;
-    margin: 1rem;
-    color: white;
-    padding: 2rem
-}
-
-.videoBgHome {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    position: absolute;
-    position: fixed;
-}
-
-.title-movie {
-    color: white;
-    font-size: 2.5rem;
-    font-weight: 700;
-    text-shadow: 1px 3px 1px #FFC107;
-}
-
-.text-movie {
-    background: transparent;
-    backdrop-filter: blur(20px);
-    border-radius: 2rem;
-    font-size: 1.5rem;
-    margin: 1rem;
-    color: white;
-    padding: 2rem;
-    text-align: justify;
-}
-
-.img-movie {
-    width: 80%;
-    height: 92%;
-}
-
-.container-home {
-    margin-bottom: 40%;
-}
+    All pages share the styles on index.css but you should create 
+    one more css for each page that will contain the selected used 
+    on that page only (the ones not reused in other pages).
+*/
