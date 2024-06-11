@@ -53,14 +53,14 @@ export const CardVehicles = ({ vehicle }, ...props) => {
                         <button className="btn btn-yellow mt-4 me-2 fw-bold">
                             <Link className="link text-decoration-none text-dark"
                                 to={`/vehicles/details/${vehicle.uid}`}
-                                onClick={() => actions.getVehiclesById(vehicle.uid)}>
+                                onClick={() => actions.getVehiclesById(vehicle.uid, "details")}>
                                 Details
                             </Link>
                         </button>
 
                         <button className="btn btn-yellow mt-4 me-2 fw-bold" hidden={store.userLogin.role == "admin" ? false : true}
                             onClick={() => {
-                                actions.getVehiclesById(vehicle.uid)
+                                actions.getVehiclesById(vehicle.uid, "edit")
                                 actions.handleShowModalDetails()
                             }}>
                             <i className="fa-solid fa-pen"></i>

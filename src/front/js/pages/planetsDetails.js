@@ -8,9 +8,9 @@ export const PlanetsDetails = (...props) => {
 
     const { store, actions } = useContext(Context);
     const navigate = useNavigate()
-    !!store.planet ? null : navigate('/planets')
 
     useEffect(() => {
+        !!store.planet ? null : navigate('/planets')
     }, [store.planet])
     return (
         <div className="container-fluid mt-5">

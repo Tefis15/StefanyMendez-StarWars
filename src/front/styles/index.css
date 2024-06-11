@@ -30,30 +30,13 @@ body {
 }
 
 .modal-content {
-    background-color: #000000;
     background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 1)), url("https://w0.peakpx.com/wallpaper/365/498/HD-wallpaper-star-wars-black-amoled.jpg");
     background-repeat: no-repeat;
     background-size: auto;
     background-position: center;
+
 }
 
-.input-modal {
-    background: transparent;
-    border: none;
-    border-bottom: 0.6px solid white;
-    border-top: 0.2px solid grey;
-    color: white;
-
-    &:focus {
-        background: transparent;
-        color: white;
-    }
-
-    &:read-only {
-        background: transparent;
-        color: #FFC107
-    }
-}
 .nav-span {
     font-size: 1.3rem;
     font-weight: 900;
@@ -88,6 +71,24 @@ body {
     &:active {
         -webkit-transform: translateY(0.25em);
         transform: translateY(0.25em);
+    }
+}
+
+.input-modal {
+    background: transparent;
+    border: none;
+    border-bottom: 0.6px solid white;
+    border-top: 0.2px solid grey;
+    color: white;
+
+    &:focus {
+        background: transparent;
+        color: white;
+    }
+
+    &:read-only {
+        background: transparent;
+        color: #FFC107
     }
 }
 
@@ -128,32 +129,3 @@ body {
     border-radius: 1rem;
     height: 22rem;
 }
-.div-search{
-    position: relative;
-    width: 30rem;
-
-}
-.input-search {
-    background: rgba(0, 0, 0, 0.2);
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    border: none;
-    border-radius: 0.5rem;
-    box-shadow: 5px 5px 10px 1px #000000;
-
-    &:focus {
-        background: transparent;
-        color: white;
-    }
-  }
-  .input-search::placeholder{
-    color: #FFC107;
-  }
-  
-  .fa-magnifying-glass {
-    position: absolute;
-    display: block;
-    bottom: .8rem;
-    right: 2.4rem;
-    color: #FFC107;
-  }

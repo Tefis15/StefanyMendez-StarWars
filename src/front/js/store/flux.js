@@ -7,7 +7,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			showModal: false,
 			showModalDetails: false,
 			deleted: false,
-			favorite: false,
 			favoritesPeople: [],
 			favoritesPlanets: [],
 			favoritesVehicles: [],
@@ -33,7 +32,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			description: null,
 
 			people: [],
-			peopleSearch: [],
 			character: null,
 			characterEdit: null,
 			height: null,
@@ -45,7 +43,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			homeworld: null,
 
 			planets: [],
-			planetsSearch: [],
 			planet: null,
 			planetEdit: null,
 			diameter: null,
@@ -58,7 +55,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			surfaceWater: null,
 
 			vehicles: [],
-			vehiclesSearch: [],
 			vehicle: null,
 			vehicleEdit: null,
 			model: null,
@@ -73,7 +69,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 			consumables: null,
 
 			starships: [],
-			starshipsSearch: [],
 			starship: null,
 			starshipEdit: null,
 			hyperdrive: null,
@@ -230,15 +225,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(error + " Error in getAllUsers")
 				}
 			},
-			getUserById: async (id, favorite) => {
+			getUserById: async (id) => {
 				try {
 					const store = getStore()
 					const actions = getActions()
 					const token = localStorage.getItem('jwt-token')
 
-					if (favorite == "favorite") {
-						setStore({ favorite: true })
-					}
 					const response = await fetch(process.env.BACKEND_URL + `/user/${id}`, {
 						method: 'GET',
 						headers: {
@@ -617,37 +609,46 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const result = await response.json()
 
 					setStore({ people: result.Results })
-					setStore({ peopleSearch: result.Results })
 				} catch (error) {
 					console.log(error + " Error in getAllPeople")
 				}
 			},
-			getPeopleById: async (uid) => {
+			getPeopleById: async (uid, type) => {
 				try {
-					const actions = getActions()
 					const response = await fetch(process.env.BACKEND_URL + `/people/details/${uid}`, {
 						method: 'GET'
 					})
 					const result = await response.json()
-
-					if (result.msg == "ok") {
-						setStore({ character: result.Results })
-
+					setStore({ character: result.Results })
+					if (type === "details") {
+						if (result.msg != "ok") {
+							setStore({ character: null })
+							setStore({ showModalDetails: false })
+							Swal.fire({
+								icon: 'error',
+								text: result.message,
+								timer: 3000,
+								padding: "2em",
+								color: "#FFC107",
+								showConfirmButton: false,
+								background: `#000000
+						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+						no-repeat
+						`,
+								backdrop: `
+						rgba(0,0,123,0.4)
+						url("https://media2.giphy.com/media/jq0BlOhhKKv8tO9oOz/giphy.gif?cid=6c09b952u3u8dsur3de499ls2qzc1i2hzuummvnuay3h7a5j&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s")
+						right top 
+						no-repeat
+						`
+							})
+						}
+					} else if (type === "edit") {
 						const response2 = await fetch(process.env.BACKEND_URL + `/people/${uid}`, {
 							method: 'GET'
 						})
 						const result2 = await response2.json()
-						if (result2.msg == "ok") {
-							setStore({ characterEdit: result2.People })
-						}
-						else {
-							actions.showSwalError(result2.message)
-						}
-					}
-					else {
-						setStore({ showModalDetails: false })
-						setStore({ character: null })
-						actions.showSwalError(result.message)
+						setStore({ characterEdit: result2.People })
 					}
 				} catch (error) {
 					console.log(error + " Error in getPeopleById")
@@ -725,6 +726,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					if (result.msg == "ok") {
 						actions.handleDeleteModalDetails()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.People.uid} - ${result.People.name} details was successfully edited`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+									url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+									no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+									url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+									right top 
+									no-repeat`
+						})
+					} else if (store.name != null) {
+						actions.editPeople(uid)
 					}
 					else {
 						actions.showSwalError(result.message)
@@ -855,9 +873,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const token = localStorage.getItem('jwt-token')
 
 					let peopleDetails = {}
-					if (store.name != null) {
-						actions.editPeople(uid)
-					}
+
 					if (store.description != null) {
 						peopleDetails.description = store.description
 					}
@@ -909,7 +925,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 								right top 
 								no-repeat`
 						})
-					} else {
+					} else if (store.name != null) {
+						actions.editPeople(uid)
+					}
+					else {
 						actions.showSwalError(result.message)
 					}
 				} catch (error) {
@@ -1005,16 +1024,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(error + " Error in deletePeopleFavorites")
 				}
 			},
-			searchPeople: (input) => {
-				const store = getStore();
-
-				const newPeople = store.peopleSearch.filter(people => {
-					if (people.name.toLowerCase().includes(input.toLowerCase())) {
-						return people
-					}
-				})
-				setStore({ people: newPeople })
-			},
 
 			//<---------------------------Planets------------------------------>//
 			getAllPlanets: async () => {
@@ -1025,38 +1034,47 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const result = await response.json()
 
 					setStore({ planets: result.Results })
-					setStore({ planetsSearch: result.Results })
-
 				} catch (error) {
 					console.log(error + " Error in getAllPlanets")
 				}
 			},
-			getPlanetsById: async (uid) => {
+			getPlanetsById: async (uid, type) => {
 				try {
-					const actions = getActions()
 					const response = await fetch(process.env.BACKEND_URL + `/planets/details/${uid}`, {
 						method: 'GET'
 					})
 					const result = await response.json()
-
-					if (result.msg == "ok") {
-						setStore({ planet: result.Results })
-
+					setStore({ planet: result.Results })
+					if (type === "details") {
+						if (result.msg != "ok") {
+							setStore({ planet: null })
+							setStore({ showModalDetails: false })
+							Swal.fire({
+								icon: 'error',
+								text: result.message,
+								timer: 3000,
+								padding: "2em",
+								color: "#FFC107",
+								showConfirmButton: false,
+								background: `#000000
+						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+						no-repeat
+						`,
+								backdrop: `
+						rgba(0,0,123,0.4)
+						url("https://media2.giphy.com/media/jq0BlOhhKKv8tO9oOz/giphy.gif?cid=6c09b952u3u8dsur3de499ls2qzc1i2hzuummvnuay3h7a5j&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s")
+						right top 
+						no-repeat
+						`
+							})
+						}
+					} else if (type === "edit") {
 						const response2 = await fetch(process.env.BACKEND_URL + `/planets/${uid}`, {
 							method: 'GET'
 						})
 						const result2 = await response2.json()
-						if (result2.msg == "ok") {
-							setStore({ planetEdit: result2.Planets })
-						}
-						else {
-							actions.showSwalError(result2.message)
-						}
-					}
-					else {
-						setStore({ planet: null })
-						setStore({ showModalDetails: false })
-						actions.showSwalError(result.message)
+						setStore({ planetEdit: result2.Planets })
+
 					}
 				} catch (error) {
 					console.log(error + " Error in getPlanetsById")
@@ -1134,6 +1152,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					if (result.msg == "ok") {
 						actions.handleDeleteModalDetails()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.Planets.uid} - ${result.Planets.name} details was successfully edited`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+									url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+									no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+									url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+									right top 
+									no-repeat`
+						})
+					} else if (store.name != null) {
+						actions.editPlanets(uid)
 					}
 					else {
 						actions.showSwalError(result.message)
@@ -1268,10 +1303,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					let planetsDetails = {}
 
-					if (store.name != null) {
-						actions.editPlanets(uid)
-					}
-
 					if (store.description != null) {
 						planetsDetails.description = store.description
 					}
@@ -1326,11 +1357,12 @@ const getState = ({ getStore, getActions, setStore }) => {
 								right top 
 								no-repeat`
 						})
+					} else if (store.name != null) {
+						actions.editPlanets(uid)
 					}
 					else {
 						actions.showSwalError(result.message)
 					}
-
 				} catch (error) {
 					console.log(error + " Error in editPlanetsDetails")
 				}
@@ -1420,16 +1452,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(error + " Error in deletePlanetsFavorites")
 				}
 			},
-			searchPlanets: (input) => {
-				const store = getStore();
-
-				const newPlanets = store.planetsSearch.filter(planets => {
-					if (planets.name.toLowerCase().includes(input.toLowerCase())) {
-						return planets
-					}
-				})
-				setStore({ planets: newPlanets })
-			},
 
 			//<---------------------------Vehicles------------------------------>//
 			getAllVehicles: async () => {
@@ -1440,38 +1462,47 @@ const getState = ({ getStore, getActions, setStore }) => {
 					const result = await response.json()
 
 					setStore({ vehicles: result.Results })
-					setStore({ vehiclesSearch: result.Results })
-
 				} catch (error) {
 					console.log(error + " Error in getAllVehicles")
 				}
 			},
-			getVehiclesById: async (uid) => {
+			getVehiclesById: async (uid, type) => {
 				try {
-					const actions = getActions()
 					const response = await fetch(process.env.BACKEND_URL + `/vehicles/details/${uid}`, {
 						method: 'GET'
 					})
 					const result = await response.json()
-
-					if (result.msg == "ok") {
-						setStore({ vehicle: result.Results })
-
+					setStore({ vehicle: result.Results })
+					if (type === "details") {
+						if (result.msg != "ok") {
+							setStore({ vehicle: null })
+							setStore({ showModalDetails: false })
+							Swal.fire({
+								icon: 'error',
+								text: result.message,
+								timer: 3000,
+								padding: "2em",
+								color: "#FFC107",
+								showConfirmButton: false,
+								background: `#000000
+						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+						no-repeat
+						`,
+								backdrop: `
+						rgba(0,0,123,0.4)
+						url("https://media2.giphy.com/media/jq0BlOhhKKv8tO9oOz/giphy.gif?cid=6c09b952u3u8dsur3de499ls2qzc1i2hzuummvnuay3h7a5j&ep=v1_internal_gif_by_id&rid=giphy.gif&ct=s")
+						right top 
+						no-repeat
+						`
+							})
+						}
+					} else if (type === "edit") {
 						const response2 = await fetch(process.env.BACKEND_URL + `/vehicles/${uid}`, {
 							method: 'GET'
 						})
 						const result2 = await response2.json()
-						if (result2.msg == "ok") {
-							setStore({ vehicleEdit: result2.Vehicles })
-						}
-						else {
-							actions.showSwalError(result2.message)
-						}
-					}
-					else {
-						setStore({ showModalDetails: false })
-						setStore({ vehicle: null })
-						actions.showSwalError(result.message)
+						setStore({ vehicleEdit: result2.Vehicles })
+
 					}
 				} catch (error) {
 					console.log(error + " Error in getVehiclesById")
@@ -1549,6 +1580,23 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					if (result.msg == "ok") {
 						actions.handleDeleteModalDetails()
+						Swal.fire({
+							title: "Do it!!!",
+							text: `${result.Vehicles.uid} - ${result.Vehicles.name} details was successfully edited`,
+							timer: 3000,
+							padding: "2em",
+							color: "#FFC107",
+							showConfirmButton: false,
+							background: `#000000
+									url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
+									no-repeat`,
+							backdrop: `rgba(0,0,123,0.4)
+									url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
+									right top 
+									no-repeat`
+						})
+					} else if (store.name != null) {
+						actions.editVehicles(uid)
 					}
 					else {
 						actions.showSwalError(result.message)
@@ -1597,7 +1645,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 						actions.showSwalError(result.message)
 					}
 				} catch (error) {
-					console.log(error + " Error in deleteVehicles")
+					console.log(error + " Error in deleteVehicle")
 				}
 			},
 			addVehiclesDetails: async () => {
@@ -1688,9 +1736,6 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					let vehiclesDetails = {}
 
-					if (store.name != null) {
-						actions.editVehicles(uid)
-					}
 					if (store.description != null) {
 						vehiclesDetails.description = store.description
 					}
@@ -1752,7 +1797,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 							right top 
 							no-repeat`
 							})
-						} else {
+						} else if (store.name != null) {
+							actions.editVehicles(uid)
+						}
+						else {
 							actions.showSwalError(result.message)
 						}
 					}
@@ -1846,360 +1894,8 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(error + " Error in deleteVehiclesFavorites")
 				}
 			},
-			searchVehicles: (input) => {
-				const store = getStore();
-
-				const newVehicles = store.vehiclesSearch.filter(vehicles => {
-					if (vehicles.name.toLowerCase().includes(input.toLowerCase())) {
-						return vehicles
-					}
-				})
-				setStore({ vehicles: newVehicles })
-			},
 
 			//<---------------------------Starships------------------------------>//
-			getAllStarships: async () => {
-				try {
-					const response = await fetch(process.env.BACKEND_URL + '/starships', {
-						method: 'GET'
-					})
-					const result = await response.json()
-
-					setStore({ starships: result.Results })
-					setStore({ starshipsSearch : result.Results })
-				} catch (error) {
-					console.log(error + " Error in getAllStarships")
-				}
-			},
-			getStarshipsById: async (uid) => {
-				try {
-					const actions = getActions()
-					const response = await fetch(process.env.BACKEND_URL + `/starships/details/${uid}`, {
-						method: 'GET'
-					})
-					const result = await response.json()
-
-					if (result.msg == "ok") {
-						setStore({ starship: result.Results })
-
-						const response2 = await fetch(process.env.BACKEND_URL + `/starships/${uid}`, {
-							method: 'GET'
-						})
-						const result2 = await response2.json()
-						if (result2.msg == "ok") {
-							setStore({ starshipEdit: result2.Starships })
-						}
-						else {
-							actions.showSwalError(result2.message)
-						}
-					}
-					else {
-						setStore({ showModalDetails: false })
-						setStore({ starship: null })
-						actions.showSwalError(result.message)
-
-					}
-				} catch (error) {
-					console.log(error + " Error in getStarshipsById")
-				}
-			},
-			addStarships: async () => {
-				try {
-					const store = getStore()
-					const actions = getActions()
-					const token = localStorage.getItem('jwt-token')
-
-					let starships = {}
-					if (store.uid != null) {
-						starships.uid = store.uid
-						starships.url = `https://www.swapi.tech/api/starships/${store.uid}`
-					}
-					if (store.name != null) {
-						starships.name = store.name
-					}
-					const response = await fetch(process.env.BACKEND_URL + '/starships', {
-						method: 'POST',
-						body: JSON.stringify(starships),
-						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': 'Bearer ' + token
-						}
-					})
-					const result = await response.json()
-					if (result.msg == "ok") {
-						actions.handleDeleteModal()
-						Swal.fire({
-							title: "Do it!!!",
-							text: `${result.Starships.uid} - ${result.Starships.name} was successfully added`,
-							timer: 3000,
-							padding: "2em",
-							color: "#FFC107",
-							showConfirmButton: false,
-							background: `#000000
-							url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
-							no-repeat`,
-							backdrop: `rgba(0,0,123,0.4)
-							url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
-							right top 
-							no-repeat`
-						})
-						actions.clearStore()
-					}
-					else {
-						actions.showSwalError(result.message)
-						actions.clearStore()
-					}
-				} catch (error) {
-					console.log(error + " Error in addStarships")
-				}
-			},
-			editStarships: async (uid) => {
-				try {
-					const store = getStore()
-					const actions = getActions()
-					const token = localStorage.getItem('jwt-token')
-
-					let starships = {}
-
-					starships.name = store.name
-
-					const response = await fetch(process.env.BACKEND_URL + `/starships/${uid}`, {
-						method: 'PUT',
-						body: JSON.stringify(starships),
-						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': 'Bearer ' + token
-						}
-					})
-					const result = await response.json()
-
-					if (result.msg == "ok") {
-						actions.handleDeleteModalDetails()
-					}
-					else {
-						actions.showSwalError(result.message)
-					}
-				} catch (error) {
-					console.log(error + " Error in editStarships")
-				}
-
-			},
-			deleteStarships: async (uid, name) => {
-				try {
-					const token = localStorage.getItem('jwt-token')
-
-					const response = await fetch(process.env.BACKEND_URL + `/starships/${uid}`, {
-						method: 'DELETE',
-						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': 'Bearer ' + token
-						}
-					})
-
-					const result = await response.json()
-
-					if (result.msg == "ok") {
-						setStore({ deleted: true })
-						Swal.fire({
-							title: 'Deleted!',
-							text: `The starship ${name} was deleted`,
-							icon: 'success',
-							showConfirmButton: false,
-							color: '#FFFFFF',
-							background: `#000000
-						url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
-						no-repeat`,
-							timer: 3000,
-							backdrop: `
-						rgba(0,0,123,0.4)
-						url("https://i.pinimg.com/originals/96/ea/bc/96eabc812b02070e025cb41776b91803.gif")
-						right top 
-						no-repeat
-						`
-						})
-						setStore({ deleted: false })
-					}
-					else {
-						actions.showSwalError(result.message)
-					}
-				} catch (error) {
-					console.log(error + " Error in deleteStarships")
-				}
-			},
-			addStarshipsDetails: async () => {
-				try {
-					const store = getStore()
-					const actions = getActions()
-					const token = localStorage.getItem('jwt-token')
-
-					let starshipsDetails = {}
-					if (store.uid != null) {
-						starshipsDetails.uid = store.uid
-					}
-					if (store.description != null) {
-						starshipsDetails.description = store.description
-					}
-					if (store.model != null) {
-						starshipsDetails.model = store.model
-					}
-					if (store.class != null) {
-						starshipsDetails.starship_class = store.class
-					}
-					if (store.manufacturer != null) {
-						starshipsDetails.manufacturer = store.manufacturer
-					}
-					if (store.costInCredits != null) {
-						starshipsDetails.cost_in_credits = store.costInCredits
-					}
-					if (store.length != null) {
-						starshipsDetails.length = store.length
-					}
-					if (store.crew != null) {
-						starshipsDetails.crew = store.crew
-					}
-					if (store.passengers != null) {
-						starshipsDetails.passengers = store.passengers
-					}
-					if (store.maxAtmospheringSpeed != null) {
-						starshipsDetails.max_atmosphering_speed = store.maxAtmospheringSpeed
-					}
-					if (store.hyperdrive != null) {
-						starshipsDetails.hyperdrive_rating = store.hyperdrive
-					}
-					if (store.mglt != null) {
-						starshipsDetails.mglt = store.mglt
-					}
-					if (store.cargoCapacity != null) {
-						starshipsDetails.cargo_capacity = store.cargoCapacity
-					}
-					if (store.consumables != null) {
-						starshipsDetails.consumables = store.consumables
-					}
-
-					const response = await fetch(process.env.BACKEND_URL + `/starships/details`, {
-						method: 'POST',
-						body: JSON.stringify(starshipsDetails),
-						headers: {
-							'Content-Type': 'application/json',
-							'Authorization': 'Bearer ' + token
-						}
-					})
-					const result = await response.json()
-
-					if (result.msg == "ok") {
-						actions.handleDeleteModalDetails()
-						Swal.fire({
-							title: "Do it!!!",
-							text: `${result.Starships_details.uid} - ${result.Starships_details.properties.name} details was successfully added`,
-							timer: 3000,
-							padding: "2em",
-							color: "#FFC107",
-							showConfirmButton: false,
-							background: `#000000
-								url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
-								no-repeat`,
-							backdrop: `rgba(0,0,123,0.4)
-								url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
-								right top 
-								no-repeat`
-						})
-					}
-					else {
-						actions.showSwalError(result.message)
-					}
-
-				} catch (error) {
-					console.log(error + " Error in addStarshipsDetails")
-				}
-			},
-			editStarshipsDetails: async (uid) => {
-				try {
-					const store = getStore()
-					const actions = getActions()
-					const token = localStorage.getItem('jwt-token')
-
-					let starshipsDetails = {}
-
-					if (store.name != null) {
-						actions.editStarships(uid)
-					}
-
-					if (store.description != null) {
-						starshipsDetails.description = store.description
-					}
-					if (store.model != null) {
-						starshipsDetails.model = store.model
-					}
-					if (store.class != null) {
-						starshipsDetails.starship_class = store.class
-					}
-					if (store.manufacturer != null) {
-						starshipsDetails.manufacturer = store.manufacturer
-					}
-					if (store.costInCredits != null) {
-						starshipsDetails.cost_in_credits = store.costInCredits
-					}
-					if (store.length != null) {
-						starshipsDetails.length = store.length
-					}
-					if (store.crew != null) {
-						starshipsDetails.crew = store.crew
-					}
-					if (store.passengers != null) {
-						starshipsDetails.passengers = store.passengers
-					}
-					if (store.maxAtmospheringSpeed != null) {
-						starshipsDetails.max_atmosphering_speed = store.maxAtmospheringSpeed
-					}
-					if (store.hyperdrive != null) {
-						starshipsDetails.hyperdrive_rating = store.hyperdrive
-					}
-					if (store.mglt != null) {
-						starshipsDetails.mglt = store.mglt
-					}
-					if (store.cargoCapacity != null) {
-						starshipsDetails.cargo_capacity = store.cargoCapacity
-					}
-					if (store.consumables != null) {
-						starshipsDetails.consumables = store.consumables
-					}
-					if (starshipsDetails != {}) {
-
-						const response = await fetch(process.env.BACKEND_URL + `/starships/details/${uid}`, {
-							method: 'PUT',
-							body: JSON.stringify(starshipsDetails),
-							headers: {
-								'Content-Type': 'application/json',
-								'Authorization': 'Bearer ' + token
-							}
-						})
-						const result = await response.json()
-						if (result.msg == "ok") {
-							actions.handleDeleteModalDetails()
-							Swal.fire({
-								title: "Do it!!!",
-								text: `${result.Starships_details.uid} - ${result.Starships_details.properties.name} details was successfully edited`,
-								timer: 3000,
-								padding: "2em",
-								color: "#FFC107",
-								showConfirmButton: false,
-								background: `#000000
-							url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/7ce55e30-e602-4e3d-b05a-d2a7a0fa49d8/daqj3gl-9a94472a-1945-4acd-ac69-b8eba9806db9.png?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzdjZTU1ZTMwLWU2MDItNGUzZC1iMDVhLWQyYTdhMGZhNDlkOFwvZGFxajNnbC05YTk0NDcyYS0xOTQ1LTRhY2QtYWM2OS1iOGViYTk4MDZkYjkucG5nIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.pSd9UXJUti2afeziH1UqbQzFGAnKPSWtnjukxIAqnO8") 
-							no-repeat`,
-								backdrop: `rgba(0,0,123,0.4)
-							url("https://media0.giphy.com/media/ZXAbA9dyEOqaLhNdPE/giphy.gif?cid=6c09b952l37rqthw96yc4srwsebezvgfxt5rzhmawchyf5ne&ep=v1_stickers_related&rid=giphy.gif&ct=s")
-							right top 
-							no-repeat`
-							})
-						} else {
-							actions.showSwalError(result.message)
-						}
-					}
-
-				} catch (error) {
-					console.log(error + " Error in editStarshipsDetails")
-				}
-			},
 			getStarshipsFavorites: async () => {
 
 				try {
@@ -2264,7 +1960,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 					favorite.starships_uid = uid
 
-					const response = await fetch(process.env.BACKEND_URL + `/starships/favorites`, {
+					const response = await fetch(process.env.BACKEND_URL + `/starships/favorites/${uid}`, {
 						method: 'DELETE',
 						body: JSON.stringify(favorite),
 						headers: {
@@ -2285,16 +1981,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 					console.log(error + " Error in deleteStarshipsFavorites")
 				}
 			},
-			searchStarships: (input) => {
-				const store = getStore();
 
-				const newStarships = store.starshipsSearch.filter(starships => {
-					if (starships.name.toLowerCase().includes(input.toLowerCase())) {
-						return starships
-					}
-				})
-				setStore({ starships: newStarships })
-			},
 
 			clearStore: () => {
 
@@ -2305,6 +1992,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 				setStore({ isActive: null })
 				setStore({ role: null })
 				setStore({ user: null })
+
 
 				setStore({ uid: null })
 				setStore({ name: null })

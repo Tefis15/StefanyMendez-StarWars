@@ -53,13 +53,13 @@ export const CardPeople = ({ character }, ...props) => {
                         <button className="btn btn-yellow mt-4 me-2 fw-bold">
                             <Link className="link text-decoration-none text-dark"
                                 to={`/people/details/${character.uid}`}
-                                onClick={() => actions.getPeopleById(character.uid)}>
+                                onClick={() => actions.getPeopleById(character.uid, "details")}>
                                 Details
                             </Link>
                         </button>
 
                         <button className="btn btn-yellow mt-4 me-2 fw-bold" hidden={store.userLogin.role == "admin" ? false : true} onClick={() => {
-                            actions.getPeopleById(character.uid)
+                            actions.getPeopleById(character.uid, "edit")
                             actions.handleShowModalDetails()
                         }}>
                             <i className="fa-solid fa-pen"></i>

@@ -49,8 +49,8 @@ export const CardFavoritesVehicles = ({ favorite }, ...props) => {
                     <h4 className="card-title text-white text-start">{favorite.vehicles_uid.name}</h4>
                     <button className="btn btn-yellow mt-4 me-2 fw-bold">
                         <Link className="link text-decoration-none text-dark"
-                            to={`/vehicles/details/${favorite.vehicles_uid.uid}`}
-                            onClick={() => actions.getVehiclesById(favorite.vehicles_uid.uid)}>
+                            to={`/Vehicles/details/${favorite.vehicles_uid.uid}`}
+                            onClick={() => actions.getVehiclesById(favorite.vehicles_uid.uid, "details")}>
                             Details
                         </Link>
                     </button>
