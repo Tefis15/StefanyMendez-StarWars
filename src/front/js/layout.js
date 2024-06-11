@@ -4,25 +4,12 @@ import ScrollToTop from "./component/scrollToTop";
 import { BackendURL } from "./component/backendURL";
 
 import { Home } from "./pages/home";
+import { Demo } from "./pages/demo";
+import { Single } from "./pages/single";
 import injectContext from "./store/appContext";
 
 import { Navbar } from "./component/navbar";
 import { Footer } from "./component/footer";
-import BackToTopBtn from "./component/backToTop";
-import Login from "./pages/login";
-import Signin from "./pages/signin";
-import ForgetPass from "./pages/forgetPass.js";
-import { Profile } from "./pages/profile.js";
-import { People } from "./pages/people.js";
-import { Planets } from "./pages/planets.js";
-import { Vehicles } from "./pages/vehicles.js";
-import { Starships } from "./pages/starships.js";
-import PeopleDetails from "./pages/peopleDetails.js";
-import PlanetsDetails from "./pages/planetsDetails.js";
-import StarshipsDetails from "./pages/starshipsDetails.js";
-import VehiclesDetails from "./pages/vehiclesDetails.js";
-import { Favorites } from "./pages/favorites.js";
-import { Users } from "./pages/users.js";
 
 //create your first component
 const Layout = () => {
@@ -30,7 +17,7 @@ const Layout = () => {
     // you can set the basename on the .env file located at the root of this project, E.g: BASENAME=/react-hello-webapp/
     const basename = process.env.BASENAME || "";
 
-    if (!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL />;
+    if(!process.env.BACKEND_URL || process.env.BACKEND_URL == "") return <BackendURL/ >;
 
     return (
         <div>
@@ -39,25 +26,12 @@ const Layout = () => {
                     <Navbar />
                     <Routes>
                         <Route element={<Home />} path="/" />
-                        <Route element={<Login />} path="/login" />
-                        <Route element={<Signin />} path="/signin" />
-                        <Route element={<ForgetPass />} path="/forgetpass" />
-                        <Route element={<Profile />} path="/profile" />
-                        <Route element={<People />} path="/people" />
-                        <Route element={<Planets />} path="/planets" />
-                        <Route element={<Vehicles />} path="/vehicles" />
-                        <Route element={<Starships />} path="/starships" />
-                        <Route element={<PeopleDetails />} path="/people/details/:uid" />
-                        <Route element={<PlanetsDetails />} path="/planets/details/:uid" />
-                        <Route element={<StarshipsDetails />} path="/starships/details/:uid" />
-                        <Route element={<VehiclesDetails />} path="/vehicles/details/:uid" />
-                        <Route element={<Favorites />} path="/favorites" />
-                        <Route element={<Users />} path="/users" />
+                        <Route element={<Demo />} path="/demo" />
+                        <Route element={<Single />} path="/single/:theid" />
                         <Route element={<h1>Not found!</h1>} />
                     </Routes>
-                    {/* <Footer /> */}
+                    <Footer />
                 </ScrollToTop>
-                <BackToTopBtn />
             </BrowserRouter>
         </div>
     );
