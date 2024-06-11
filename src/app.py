@@ -1894,7 +1894,7 @@ def delete_starships(starships_uid):
     
     starships_details = StarshipsDetails.query.filter_by(uid=starships_uid).first()
     starships_people = StarshipsPeople.query.filter_by(people_uid=starships_uid)
-    starships_favorites = StarshipFavorites.query.filter_by(starships_uid=starships_uid) 
+    starships_favorites = StarshipFavorites.query.filter_by(starship_uid=starships_uid) 
  
      
     if starships_details:

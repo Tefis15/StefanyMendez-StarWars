@@ -53,14 +53,14 @@ export const CardPlanets = ({ planet }, ...props) => {
                         <button className="btn btn-yellow mt-4 me-2 fw-bold">
                             <Link className="link text-decoration-none text-dark"
                                 to={`/planets/details/${planet.uid}`}
-                                onClick={() => actions.getPlanetsById(planet.uid, "details")}>
+                                onClick={() => actions.getPlanetsById(planet.uid)}>
                                 Details
                             </Link>
                         </button>
 
                         <button className="btn btn-yellow mt-4 me-2 fw-bold" hidden={store.userLogin.role == "admin" ? false : true}
                             onClick={() => {
-                                actions.getPlanetsById(planet.uid, "edit")
+                                actions.getPlanetsById(planet.uid)
                                 actions.handleShowModalDetails()
                             }}>
                             <i className="fa-solid fa-pen"></i>

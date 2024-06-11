@@ -19,7 +19,7 @@ export const Favorites = () => {
 		actions.getStarshipsFavorites()
 
 
-	}, [store.deleted])
+	}, [store.deleted, store.isLoggedIn])
 
 	return (
 		<>
