@@ -9,8 +9,9 @@ export const PeopleDetails = (...props) => {
     const { store, actions } = useContext(Context);
     const navigate = useNavigate()
 
+    !!store.character ? null : navigate('/people')
+
     useEffect(() => {
-        !!store.character ? null : navigate('/people')
     }, [store.character])
 
     return (

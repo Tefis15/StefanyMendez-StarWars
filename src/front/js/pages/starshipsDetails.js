@@ -1,25 +1,30 @@
 import "../../styles/starships.css";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect} from "react";
 import { Context } from "../store/appContext.js";
+import { useNavigate } from "react-router-dom";
 
 
 export const StarshipsDetails = (...props) => {
 
     const { store, actions } = useContext(Context);
+    const navigate = useNavigate()
 
+    !!store.starship ? null : navigate('/starships')
+    useEffect(() => {
+    }, [store.starship])
     return (
         <div className="container-fluid mt-5">
             <div className="row justify-content-center">
                 <div className="col-lg-4 col-sm-12">
-                    <img className="img-fluid rounded" src={`https://starwars-visualguide.com/assets/img/starships/5.jpg `}
+                    <img className="img-fluid rounded" src={`https://starwars-visualguide.com/assets/img/starships/${!!store.starship ? store.starship.uid : "...Loading"}.jpg `}
                         onError={({ currentTarget }) => {
                             currentTarget.onerror = null; // prevents looping
                             currentTarget.src = "https://starwars-visualguide.com/assets/img/placeholder.jpg";
                         }}></img>
                 </div>
                 <div className="col-lg-6 col-sm-auto my-auto">
-                    <h1 className="mb-3 mt-2 text-warning">Luke {/* {!!store.idCharacter ? store.idCharacter.name : "...Loading"} */}</h1>
-                    <p className="p-description ms-md-5 ms-sm-0 fs-5">Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen. No sólo sobrevivió 500 años, sino que tambien ingresó como texto de relleno en documentos electrónicos, quedando esencialmente igual al original. </p>
+                    <h1 className="mb-3 mt-2 text-warning">{!!store.starship ? store.starship.properties.name : "...Loading"}</h1>
+                    <p className="p-description ms-md-5 ms-sm-0 fs-5">{!!store.starship ? store.starship.description : "...Loading"}</p>
                 </div>
             </div>
             <hr className="text-warning" />
@@ -27,66 +32,65 @@ export const StarshipsDetails = (...props) => {
                 <div className="col-lg-3 col-sm-auto col-md-auto text-center my-5">
                     <label className="fs-3 fw-bold text-warning">Model</label>
                     <br />
-                    <label className="fs-4">67654{/* {!!store.idCharacter ? store.idCharacter.birth_year : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.model : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
-                    <label className="fs-3 fw-bold text-warning">Class</label>
+                    <label className="fs-3 fw-bold text-warning">Starships Class</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.gender : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.starship_class : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
                     <label className="fs-3 fw-bold text-warning">Manufacturer</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.mass : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.manufacturer : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
-                    <label className="fs-3 fw-bold text-warning">Cost in Credits</label>
+                    <label className="fs-3 fw-bold text-warning">Cost In Credits</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.height : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.cost_in_credits : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
-                    <label className="fs-3 fw-bold text-warning">Lenght</label>
+                    <label className="fs-3 fw-bold text-warning">Length</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.skin_color : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.length : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
                     <label className="fs-3 fw-bold text-warning">Crew</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.eye_color : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.crew : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
                     <label className="fs-3 fw-bold text-warning">Passengers</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.eye_color : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.passengers : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
                     <label className="fs-3 fw-bold text-warning">Max Atmosphering Speed</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.eye_color : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.max_atmosphering_speed : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
                     <label className="fs-3 fw-bold text-warning">Hyperdrive Rating</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.eye_color : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.hyperdrive_rating : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
                     <label className="fs-3 fw-bold text-warning">MGLT</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.eye_color : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.MGLT : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
                     <label className="fs-3 fw-bold text-warning">Cargo Capacity</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.eye_color : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.cargo_capacity : "...Loading"}</label>
                 </div>
                 <div className="col-lg-3 col-sm-auto text-center my-5">
                     <label className="fs-3 fw-bold text-warning">Consumables</label>
                     <br />
-                    <label className="fs-4">{/* {!!store.idCharacter ? store.idCharacter.eye_color : "...Loading"} */}</label>
+                    <label className="fs-4">{!!store.starship ? store.starship.properties.consumables : "...Loading"}</label>
                 </div>
             </div>
         </div>
     )
-
 }
 export default StarshipsDetails
